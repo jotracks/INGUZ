@@ -1,0 +1,20 @@
+/* historial inline en tarjeta de ejercicio */
+.hist-title {
+  font-size: 9px; color: var(--muted2); font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-top: 10px; margin-bottom: 5px;
+  display: flex; align-items: center; gap: 5px;
+}
+.hist-title svg circle, .hist-title svg polyline { stroke: var(--muted2); }
+
+.hist-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 8px; border-radius: 8px;
+  background: var(--surface3); margin-bottom: 3px;
+}
+.hist-serie {
+  font-family: var(--font-d); font-size: 14px;
+  color: var(--green); min-width: 22px;
+}
+.hist-val   { font-size: 11px; color: var(--muted2); flex: 1; }
+.hist-best  { font-size: 12px; color: var(--green); font-weight: 700; }

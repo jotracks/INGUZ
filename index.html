@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>INGUZ Box Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/rutinas.css">
+<link rel="stylesheet" href="css/historial.css">
+<link rel="stylesheet" href="css/perfil.css">
+</head>
+<body>
+<div class="phone">
+<div class="statusbar"><span>9:41</span><span>🔋 94%</span></div>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div class="screen active" id="screen-login">
+  <div class="login-logo">
+    <svg viewBox="0 0 60 60" fill="none">
+      <line x1="6"  y1="6"  x2="54" y2="54" stroke="#5cb85c" stroke-width="7" stroke-linecap="round"/>
+      <line x1="54" y1="6"  x2="6"  y2="54" stroke="#5cb85c" stroke-width="7" stroke-linecap="round"/>
+      <line x1="6"  y1="18" x2="42" y2="54" stroke="#5cb85c" stroke-width="4" stroke-linecap="round" opacity=".4"/>
+      <line x1="18" y1="6"  x2="54" y2="42" stroke="#5cb85c" stroke-width="4" stroke-linecap="round" opacity=".4"/>
+    </svg>
+    <div class="ll-title">INGUZ</div>
+    <div class="ll-sub">Box Training</div>
+  </div>
+  <div class="login-box">
+    <div class="lbox-title">Ingresá a tu cuenta</div>
+    <div class="lbox-sub">Usá tu DNI para identificarte</div>
+    <div style="margin-bottom:16px">
+      <label class="inp-lbl">DNI</label>
+      <input class="inp-field" id="input-dni" type="number" placeholder="Ej: 28541963">
+    </div>
+    <button class="login-btn" onclick="doLogin()">INGRESAR →</button>
+    <div class="login-err" id="login-err">❌ DNI no encontrado. Verificá el número.</div>
+  </div>
+  <div class="login-hint">
+    Demo: <span>28541963</span> (activo) · <span>35102847</span> (vencido)
+  </div>
+</div>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div class="screen" id="screen-home">
+  <div class="header">
+    <button class="inguz-btn" onclick="showScreen('home')">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+        <line x1="4" y1="4" x2="28" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+        <line x1="28" y1="4" x2="4" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="logo-text">INGUZ</div>
+        <div class="logo-sub-s">Box Training</div>
+      </div>
+    </button>
+    <div class="avatar" id="avatar-home" onclick="showScreen('perfil')">JM</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-tag">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      Jueves · 12 Mar
+    </div>
+    <div class="hero-title" id="hero-saludo">¡Buenas,<br>Jota! 💪</div>
+    <div class="hero-sub">Box Cardio a las 18:00 hs</div>
+    <button class="hero-btn" onclick="showScreen('reservas')">
+      Ver mis clases
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+
+  <div class="st">ESTA SEMANA</div>
+  <div class="week-row">
+    <div class="ring-day done">L</div>
+    <div class="ring-day done">M</div>
+    <div class="ring-day done">X</div>
+    <div class="ring-day today">J</div>
+    <div class="ring-day">V</div>
+    <div class="ring-day">S</div>
+    <div class="ring-day">D</div>
+  </div>
+
+  <div class="stats-row" style="margin-top:12px">
+    <div class="stat-card"><div class="stat-num">3</div><div class="stat-lbl">Entrenos</div></div>
+    <div class="stat-card"><div class="stat-num">4.2</div><div class="stat-lbl">Horas</div></div>
+    <div class="stat-card"><div class="stat-num">847</div><div class="stat-lbl">Calorías</div></div>
+  </div>
+
+  <div class="st">PRÓXIMAS CLASES</div>
+  <!-- clases generadas por JS con scroll infinito -->
+  <div class="classes-scroll" id="classes-scroll-wrap"></div>
+</div>
+
+<!-- ══════════════ RESERVAS ══════════════ -->
+<div class="screen" id="screen-reservas">
+  <div class="header">
+    <button class="inguz-btn" onclick="showScreen('home')">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+        <line x1="4" y1="4" x2="28" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+        <line x1="28" y1="4" x2="4" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div><div class="logo-text">RESERVAS</div></div>
+    </button>
+    <div class="avatar" id="avatar-res" onclick="showScreen('perfil')">JM</div>
+  </div>
+
+  <!-- calendario generado por JS -->
+  <div class="res-mes-label" id="res-mes-label"></div>
+  <div class="day-sel" id="day-sel-wrap"></div>
+
+  <div class="st">CLASES DEL DÍA</div>
+  <div class="booking-list">
+    <div class="booking-card">
+      <div class="bk-time">7:00 <span>AM</span></div>
+      <div class="bk-info">
+        <div class="bk-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5a5 5 0 0 1 7 7l-7 7-7-7a5 5 0 0 1 7-7z"/><path d="M17.5 6.5a5 5 0 0 1 0 7"/><line x1="12" y1="12" x2="22" y2="2"/></svg>
+          Musculación
+        </div>
+        <div class="bk-teacher">Prof. Rodríguez · 12 lugares</div>
+      </div>
+      <button class="book-btn available" onclick="reservar(this)">Reservar</button>
+    </div>
+    <div class="booking-card">
+      <div class="bk-time">9:00 <span>AM</span></div>
+      <div class="bk-info">
+        <div class="bk-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Funcional
+        </div>
+        <div class="bk-teacher">Prof. Valentina · 8 lugares</div>
+      </div>
+      <button class="book-btn booked" disabled>Reservado ✓</button>
+    </div>
+    <div class="booking-card">
+      <div class="bk-time">11:00 <span>AM</span></div>
+      <div class="bk-info">
+        <div class="bk-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="M9 20l3-8 3 8"/><path d="M6 12H4m16 0h-2"/><circle cx="12" cy="12" r="6"/></svg>
+          Stretching
+        </div>
+        <div class="bk-teacher">Prof. Torres · 10 lugares</div>
+      </div>
+      <button class="book-btn available" onclick="reservar(this)">Reservar</button>
+    </div>
+    <div class="booking-card">
+      <div class="bk-time">18:00 <span>PM</span></div>
+      <div class="bk-info">
+        <div class="bk-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Box Cardio
+        </div>
+        <div class="bk-teacher">Prof. García · 5 lugares</div>
+      </div>
+      <button class="book-btn available" onclick="reservar(this)">Reservar</button>
+    </div>
+    <div class="booking-card">
+      <div class="bk-time">19:30 <span>PM</span></div>
+      <div class="bk-info">
+        <div class="bk-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          HIIT
+        </div>
+        <div class="bk-teacher">Prof. López · 0 lugares</div>
+      </div>
+      <button class="book-btn booked" disabled>Completo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ RUTINAS ══════════════ -->
+<div class="screen" id="screen-rutinas">
+  <div class="header">
+    <button class="inguz-btn" onclick="showScreen('home')">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+        <line x1="4" y1="4" x2="28" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+        <line x1="28" y1="4" x2="4" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div><div class="logo-text">RUTINAS</div></div>
+    </button>
+    <div class="avatar" id="avatar-rut" onclick="showScreen('perfil')">JM</div>
+  </div>
+
+  <div class="rtabs">
+    <div class="rtab active" onclick="switchTab(this,'tab-pecho')">Hoy · Pecho</div>
+    <div class="rtab" onclick="switchTab(this,'tab-espalda')">Espalda</div>
+    <div class="rtab" onclick="switchTab(this,'tab-piernas')">Piernas</div>
+    <div class="rtab" onclick="switchTab(this,'tab-box')">Box</div>
+  </div>
+
+  <div id="tab-pecho">   <div class="st">PECHO + TRÍCEPS · DÍA A</div><div class="rlist" id="rlist-pecho"></div></div>
+  <div id="tab-espalda" style="display:none"><div class="st">ESPALDA + BÍCEPS · DÍA B</div><div class="rlist" id="rlist-espalda"></div></div>
+  <div id="tab-piernas" style="display:none"><div class="st">PIERNAS · DÍA C</div><div class="rlist" id="rlist-piernas"></div></div>
+  <div id="tab-box"     style="display:none"><div class="st">BOX CARDIO · CIRCUITO</div><div class="rlist" id="rlist-box"></div></div>
+</div>
+
+<!-- ══════════════ PERFIL ══════════════ -->
+<div class="screen" id="screen-perfil">
+  <div class="header">
+    <button class="inguz-btn" onclick="showScreen('home')">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+        <line x1="4" y1="4" x2="28" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+        <line x1="28" y1="4" x2="4" y2="28" stroke="#5cb85c" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div><div class="logo-text">MI PERFIL</div></div>
+    </button>
+  </div>
+
+  <!-- CAJÓN SUPERIOR -->
+  <div class="profile-card">
+    <div class="pc-top">
+      <!-- Foto con crop -->
+      <div class="pc-photo-wrap" onclick="openPhotoInput()">
+        <div class="pc-photo" id="pc-photo">
+          <span id="pc-photo-init">JM</span>
+          <img id="pc-photo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;top:0;left:0;">
+        </div>
+        <div class="pc-cam">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+      </div>
+      <input type="file" id="photo-input" accept="image/*">
+
+      <div class="pc-info">
+        <div class="pc-name"  id="pc-name">JOTA MOSSOTTO</div>
+        <div class="pc-plan"  id="pc-plan">Plan Premium 💎</div>
+        <div class="pc-since" id="pc-since">Miembro desde Enero 2024</div>
+      </div>
+    </div>
+
+    <!-- Fila de redes: solo iconos -->
+    <div class="pc-redes-row">
+      <!-- Instagram -->
+      <div class="red-icon-btn" id="red-btn-ig" title="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        <div class="red-dot"></div>
+      </div>
+      <!-- Facebook -->
+      <div class="red-icon-btn" id="red-btn-fb" title="Facebook">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+        <div class="red-dot"></div>
+      </div>
+      <!-- X -->
+      <div class="red-icon-btn" id="red-btn-x" title="X (Twitter)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+        <div class="red-dot"></div>
+      </div>
+      <!-- TikTok -->
+      <div class="red-icon-btn" id="red-btn-tt" title="TikTok">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+        </svg>
+        <div class="red-dot"></div>
+      </div>
+      <!-- YouTube -->
+      <div class="red-icon-btn" id="red-btn-yt" title="YouTube">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22.54 6.42A2.78 2.78 0 0 0 20.6 4.47C18.88 4 12 4 12 4s-6.88 0-8.6.47A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.53C5.12 20 12 20 12 20s6.88 0 8.6-.47a2.78 2.78 0 0 0 1.94-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+          <polyline points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
+        </svg>
+        <div class="red-dot"></div>
+      </div>
+
+      <!-- Botón editar -->
+      <button class="pc-edit-btn" id="pc-edit-btn" onclick="toggleEditRedes()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        <span>Editar</span>
+      </button>
+    </div>
+
+    <!-- Panel edición redes (oculto por defecto) -->
+    <div class="pc-redes-edit" id="pc-redes-edit">
+      <div class="red-edit-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <input class="red-edit-inp" id="red-inp-ig" placeholder="@usuario.instagram" type="text">
+      </div>
+      <div class="red-edit-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        <input class="red-edit-inp" id="red-inp-fb" placeholder="@usuario.facebook" type="text">
+      </div>
+      <div class="red-edit-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+        <input class="red-edit-inp" id="red-inp-x" placeholder="@usuario.x" type="text">
+      </div>
+      <div class="red-edit-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+        <input class="red-edit-inp" id="red-inp-tt" placeholder="@usuario.tiktok" type="text">
+      </div>
+      <div class="red-edit-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42A2.78 2.78 0 0 0 20.6 4.47C18.88 4 12 4 12 4s-6.88 0-8.6.47A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.53C5.12 20 12 20 12 20s6.88 0 8.6-.47a2.78 2.78 0 0 0 1.94-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polyline points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        <input class="red-edit-inp" id="red-inp-yt" placeholder="@canal.youtube" type="text">
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBRESÍA -->
+  <div class="st">MEMBRESÍA</div>
+  <div class="memb-card ok" id="memb-card">
+    <div class="memb-row">
+      <div><div class="memb-lbl">Último pago</div><div class="memb-val" id="memb-ultimo">15 Feb 2025</div></div>
+      <div style="text-align:right"><div class="memb-lbl">Próximo vencimiento</div><div class="memb-val" id="memb-proximo">15 Mar 2025</div></div>
+    </div>
+    <div class="molinete ok" id="molinete">
+      <div class="mol-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+      <div class="mol-info">
+        <div class="mol-title" id="mol-title">✅ Acceso habilitado</div>
+        <div class="mol-sub"   id="mol-sub">Tu membresía está al día.</div>
+      </div>
+      <div class="mol-dot g" id="mol-dot"></div>
+    </div>
+  </div>
+
+  <!-- PROGRESO -->
+  <div class="st">PROGRESO DEL MES</div>
+  <div class="prog-section">
+    <div class="prog-item">
+      <div class="prog-head"><span class="prog-lbl">Asistencia</span><span class="prog-val" id="prog-asist">18/22 clases</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-asist-bar" style="width:82%"></div></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-head"><span class="prog-lbl">Meta de peso</span><span class="prog-val">75 / 72 kg</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:60%"></div></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-head"><span class="prog-lbl">Cardio semanal</span><span class="prog-val">3/4 sesiones</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:75%"></div></div>
+    </div>
+  </div>
+
+  <div class="st">OPCIONES</div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="showToast('Abriendo historial…')">
+      <div class="mi-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="mi-text">Historial de entrenamientos</div><div class="mi-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="showToast('Abriendo pagos…')">
+      <div class="mi-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+      <div class="mi-text">Mi membresía y pagos</div><div class="mi-arrow">›</div>
+    </div>
+    <div class="menu-item" onclick="showToast('Abriendo ajustes…')">
+      <div class="mi-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="mi-text">Ajustes de cuenta</div><div class="mi-arrow">›</div>
+    </div>
+  </div>
+
+  <button class="logout-btn" onclick="doLogout()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Cerrar sesión
+  </button>
+  <div style="height:14px"></div>
+</div>
+
+<!-- Crop overlay (fuera del perfil, fixed) -->
+<div class="crop-overlay" id="crop-overlay">
+  <div class="crop-title">AJUSTÁ TU FOTO</div>
+  <div class="crop-sub">Mové y hacé zoom para encuadrar</div>
+  <div class="crop-circle-wrap" id="crop-circle-wrap">
+    <img class="crop-img" id="crop-img" src="" alt="">
+  </div>
+  <div class="crop-controls">
+    <div class="crop-slider-wrap">
+      <span class="crop-slider-lbl">Zoom</span>
+      <input type="range" class="crop-slider" id="scale-slider" min="50" max="400" value="100">
+    </div>
+  </div>
+  <div class="crop-btns">
+    <button class="crop-btn cancel" onclick="cancelCrop()">Cancelar</button>
+    <button class="crop-btn apply"  onclick="applyCrop()">Aplicar</button>
+  </div>
+</div>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav class="nav" id="main-nav" style="display:none">
+  <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
+    <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="nav-lbl">Inicio</span>
+  </div>
+  <div class="nav-item" id="nav-reservas" onclick="showScreen('reservas')">
+    <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8"  y1="2" x2="8"  y2="6"/>
+      <line x1="3"  y1="10" x2="21" y2="10"/>
+    </svg>
+    <span class="nav-lbl">Reservas</span>
+  </div>
+  <div class="nav-item" id="nav-rutinas" onclick="showScreen('rutinas')">
+    <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 6.5a5 5 0 0 1 7 7l-7 7-7-7a5 5 0 0 1 7-7z"/>
+      <path d="M17.5 6.5a5 5 0 0 1 0 7"/>
+      <line x1="12" y1="12" x2="22" y2="2"/>
+    </svg>
+    <span class="nav-lbl">Rutinas</span>
+  </div>
+  <div class="nav-item" id="nav-perfil" onclick="showScreen('perfil')">
+    <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+    <span class="nav-lbl">Perfil</span>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<!-- Scripts en orden: primero datos, luego lógica -->
+<script src="js/data.js"></script>
+<script src="js/rutinas.js"></script>
+<script src="js/calendario.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

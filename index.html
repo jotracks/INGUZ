@@ -918,14 +918,14 @@
       return null;
     }
 
-    function buildSelectOptions(selectId, from, to, step = 1, suffix = '') {
-      const el = document.getElementById(selectId);
-      const options = ['<option value="">—</option>'];
-      for (let i = from; i <= to; i += step) {
-        options.push(`<option value="${i}">${i}${suffix}</option>`);
-      }
-      el.innerHTML = options.join('');
-    }
+   function buildSelectOptions(selectId, from, to, step = 1, suffix = '') {
+  const el = document.getElementById(selectId);
+  const options = ['<option value="">—</option>'];
+  for (let i = from; i <= to; i = Math.round((i + step) * 10) / 10) {
+    options.push(`<option value="${i}">${i}${suffix}</option>`);
+  }
+  el.innerHTML = options.join('');
+}
 
     function formatDateShort(dateStr) {
       const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -1458,13 +1458,13 @@
     });
 
     function seedSelects() {
-      buildSelectOptions('m-series', 1, 10);
-      buildSelectOptions('m-reps', 1, 30);
-      buildSelectOptions('m-peso', 0, 200, 2, 'kg');
-      buildSelectOptions('retro-series', 1, 10);
-      buildSelectOptions('retro-reps', 1, 30);
-      buildSelectOptions('retro-peso', 0, 200, 2, 'kg');
-    }
+  buildSelectOptions('m-series', 1, 10);
+  buildSelectOptions('m-reps', 1, 30);
+  buildSelectOptions('m-peso', 0, 100, 0.5, 'kg');
+  buildSelectOptions('retro-series', 1, 10);
+  buildSelectOptions('retro-reps', 1, 30);
+  buildSelectOptions('retro-peso', 0, 100, 0.5, 'kg');
+}
 
     document.addEventListener('DOMContentLoaded', async () => {
       seedSelects();

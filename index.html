@@ -1841,6 +1841,7 @@ function saveData(data) {
 }
 
 async function pushToGitHub(data) {
+  if (!GH_TOKEN || GH_TOKEN === 'offline') return;
   if (syncPending) return;
   syncPending = true;
   try {
@@ -1852,6 +1853,8 @@ async function pushToGitHub(data) {
       if (res.ok) {
         const json = await res.json();
         ghSha = json.sha;
+      } else if (res.status !== 404) {
+        throw new Error('No se pudo leer el archivo remoto');
       }
     }
     // No guardar la foto en GitHub (demasiado pesada, queda solo en localStorage)
@@ -1863,6 +1866,7 @@ async function pushToGitHub(data) {
       content: btoa(unescape(encodeURIComponent(JSON.stringify(dataParaGH, null, 2))))
     };
     if (ghSha) body.sha = ghSha;
+
     const putRes = await fetch(GH_API, {
       method: 'PUT',
       headers: {
@@ -1877,20 +1881,24 @@ async function pushToGitHub(data) {
       ghSha = putJson.content.sha;
       showSyncDot('ok');
     } else {
+      console.error('GitHub push error', putRes.status, await putRes.text());
       showSyncDot('err');
     }
   } catch(e) {
+    console.error(e);
     showSyncDot('err');
   }
   syncPending = false;
 }
 
 async function pullFromGitHub() {
+  if (!GH_TOKEN || GH_TOKEN === 'offline') return false;
   try {
     const res = await fetch(GH_API + '?t=' + Date.now(), {
       headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
     });
-    if (!res.ok) return;
+    if (res.status === 404) return false;
+    if (!res.ok) return false;
     const json = await res.json();
     ghSha = json.sha;
     const decoded = decodeURIComponent(escape(atob(json.content.replace(/
@@ -1900,14 +1908,16 @@ async function pullFromGitHub() {
     const localData = getData();
     const foto = localData.perfil ? localData.perfil.foto : '';
     localStorage.setItem('inguz_data', JSON.stringify(remoteData));
-    if (foto && remoteData.perfil) {
+    if (foto) {
       const d = getData();
+      d.perfil = d.perfil || {};
       d.perfil.foto = foto;
       localStorage.setItem('inguz_data', JSON.stringify(d));
     }
     showSyncDot('ok');
     return true;
   } catch(e) {
+    console.error(e);
     return false;
   }
 }
@@ -2497,7 +2507,7 @@ async function guardarToken() {
   errEl.style.display = 'none';
 
   if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
-    errEl.textContent = 'El token no parece válido. Debe empezar con ghp_ o github_pat_';
+    errEl.textContent = 'El token no parece válido.';
     errEl.style.display = 'block';
     return;
   }
@@ -2512,8 +2522,8 @@ async function guardarToken() {
       `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`,
       { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
     );
-    if (res.status === 401) {
-      errEl.textContent = 'Token inválido o sin permisos. Verificá que tenga acceso al repo y permiso de escritura.';
+    if (res.status === 401 || res.status === 403) {
+      errEl.textContent = 'Token inválido o sin permisos. Verificá que tenga acceso al repo y Contents: Read and write.';
       errEl.style.display = 'block';
       btn.textContent = 'Conectar y entrar';
       btn.style.opacity = '1';
@@ -2545,6 +2555,7 @@ function entrarSinGitHub() {
 }
 
 function mostrarSetup() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-setup').classList.add('active');
 }
 
@@ -2552,8 +2563,9 @@ function ocultarSetup() {
   document.getElementById('screen-setup').classList.remove('active');
 }
 
-async async function iniciarApp() {
+async function iniciarApp() {
   ocultarSetup();
+  showScreen('home');
   buildRutinas();
   updateHome();
   if (GH_TOKEN && GH_TOKEN !== 'offline') {
@@ -2561,7 +2573,6 @@ async async function iniciarApp() {
     if (pulled) {
       buildRutinas();
       updateHome();
-      updatePerfil();
     }
   }
 }
@@ -2573,7 +2584,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     mostrarSetup();
   } else {
     GH_TOKEN = savedToken;
-    await iniciarApp();
+    iniciarApp();
   }
 });
 

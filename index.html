@@ -423,10 +423,32 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   border:1px solid var(--border2);color:var(--muted2);
   display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;
 }
-.sheet-sub{color:var(--muted2);font-size:14px;padding:0 20px 14px;border-bottom:1px solid var(--border);font-weight:500}
+.sheet-sub{padding:0 20px 14px;border-bottom:1px solid var(--border)}
 .sheet-sub strong{color:var(--text)}
-.sheet-grid{display:flex;gap:8px;padding:16px 20px 12px}
-.sheet-grid .field{flex:1}
+.ex-meta{display:flex;gap:8px;align-items:stretch;padding:0 20px 16px;border-bottom:1px solid var(--border)}
+.ex-meta-pill{
+  flex:1;background:var(--s2);border:1px solid var(--border2);
+  border-radius:14px;padding:12px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.ex-meta-lbl{font-size:10px;font-weight:800;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px}
+.ex-meta-val{font-family:var(--fd);font-size:40px;line-height:1;color:var(--text);letter-spacing:1px}
+.sheet-grid{display:flex;gap:10px;padding:16px 20px 14px}
+.sheet-grid .field{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.srp-label{
+  font-family:var(--fd);font-size:42px;line-height:1;font-weight:400;
+  color:var(--muted2);letter-spacing:1px;
+}
+.srp-select{
+  width:100%;background:var(--s2);border:2px solid var(--border2);
+  border-radius:14px;color:var(--text);
+  font-size:28px;font-weight:800;font-family:var(--fb);
+  padding:14px 4px;text-align:center;outline:none;
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  transition:border-color .2s,background .2s;
+}
+.srp-select:focus{border-color:var(--green);background:var(--gbg)}
+.srp-select.filled{border-color:var(--green);color:var(--green);background:var(--gbg)}
 .history-box{padding:16px 20px 0}
 .history-title{color:var(--green);text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:10px}
 .history-list{display:flex;flex-direction:column;gap:6px}
@@ -715,11 +737,23 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         <div class="sheet-title" id="ex-modal-title">Ejercicio</div>
         <button class="sheet-close" onclick="forceCloseExerciseModal()">✕</button>
       </div>
-      <div class="sheet-sub" id="ex-modal-sub">Series — · Reps —</div>
+      <div class="ex-meta" id="ex-modal-sub-wrap">
+        <div class="ex-meta-pill"><div class="ex-meta-lbl">Series</div><div class="ex-meta-val" id="ex-meta-series">—</div></div>
+        <div class="ex-meta-pill"><div class="ex-meta-lbl">Reps</div><div class="ex-meta-val" id="ex-meta-reps">—</div></div>
+      </div>
       <div class="sheet-grid">
-        <div class="field"><label class="label">Series</label><select class="select" id="m-series"></select></div>
-        <div class="field"><label class="label">Reps</label><select class="select" id="m-reps"></select></div>
-        <div class="field"><label class="label">Peso</label><select class="select" id="m-peso"></select></div>
+        <div class="field">
+          <div class="srp-label">S</div>
+          <select class="srp-select" id="m-series" onchange="srpChg(this)"></select>
+        </div>
+        <div class="field">
+          <div class="srp-label">R</div>
+          <select class="srp-select" id="m-reps" onchange="srpChg(this)"></select>
+        </div>
+        <div class="field">
+          <div class="srp-label" style="font-size:28px;padding-top:7px">KG</div>
+          <select class="srp-select" id="m-peso" onchange="srpChg(this)"></select>
+        </div>
       </div>
       <div style="padding:0 20px 14px">
         <label class="label">Comentario</label>
@@ -1283,19 +1317,28 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       window.__toastT = setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
+    function srpChg(sel) {
+      sel.classList.toggle('filled', !!sel.value);
+    }
+
     function openExerciseModal(exId) {
       currentExerciseId = exId;
       const ex = exerciseById(exId);
       if (!ex) return;
       document.getElementById('ex-modal-title').textContent = ex.nombre;
-      document.getElementById('ex-modal-sub').innerHTML = `<strong>Series:</strong> ${ex.series} &nbsp;·&nbsp; <strong>Reps:</strong> ${ex.reps}`;
+      document.getElementById('ex-meta-series').textContent = ex.series;
+      document.getElementById('ex-meta-reps').textContent = ex.reps;
 
       const hist = getHistorial()[exId] || [];
       const last = hist.length ? hist[hist.length - 1] : null;
 
-      document.getElementById('m-series').value = last?.series || ex.series || '';
-      document.getElementById('m-reps').value = last?.reps || '';
-      document.getElementById('m-peso').value = last?.peso || '';
+      const ms = document.getElementById('m-series');
+      const mr = document.getElementById('m-reps');
+      const mp = document.getElementById('m-peso');
+      ms.value = last?.series || ex.series || '';
+      mr.value = last?.reps || '';
+      mp.value = last?.peso || '';
+      [ms, mr, mp].forEach(s => s.classList.toggle('filled', !!s.value));
       document.getElementById('m-comment').value = '';
       renderExerciseHistory(exId);
       document.getElementById('exercise-overlay').classList.add('show');

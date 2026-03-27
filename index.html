@@ -433,18 +433,17 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 }
 .ex-meta-lbl{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1.5px}
 .ex-meta-val{font-family:var(--fd);font-size:40px;line-height:1;color:var(--green);letter-spacing:1px}
-.sheet-grid{display:flex;gap:10px;padding:16px 20px 14px}
-.sheet-grid .field{flex:1;display:flex;flex-direction:column;align-items:stretch;gap:6px}
+.sheet-grid{display:flex;gap:10px;padding:16px 20px 14px;align-items:flex-end}
+.sheet-grid .field{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .srp-label{
   font-family:var(--fd);font-size:28px;line-height:1;font-weight:400;
   color:var(--muted2);letter-spacing:1px;
-  text-align:center;display:block;width:100%;
-  padding:6px 0 2px;
+  text-align:center;display:block;
 }
 .srp-select{
   width:100%;background:var(--s2);border:2px solid var(--border2);
   border-radius:14px;color:var(--text);
-  font-size:28px;font-weight:800;font-family:var(--fb);
+  font-size:26px;font-weight:800;font-family:var(--fb);
   padding:14px 4px;text-align:center;outline:none;
   appearance:none;-webkit-appearance:none;cursor:pointer;
   transition:border-color .2s,background .2s;

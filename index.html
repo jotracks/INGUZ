@@ -590,7 +590,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       <div class="stat-card"><div class="stat-num" id="stat-racha">0</div><div class="stat-lbl">Racha</div></div>
     </div>
     <div class="section-title">Sesión de hoy</div>
-    <div class="today-card" onclick="showScreen('rutinas')">
+    <div class="today-card" onclick="goToTodayRutina()">
       <div class="today-icon">⚡</div>
       <div style="flex:1;min-width:0">
         <div class="today-label" id="today-label">HOY ENTRENÁS</div>
@@ -1297,6 +1297,22 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       updatePerfil();
       updateHome();
       showToast('Perfil guardado');
+    }
+
+    function goToTodayRutina() {
+      const gid = PLAN_SEMANAL[new Date().getDay()];
+      showScreen('rutinas');
+      if (gid) {
+        // switch tab to that group
+        currentTab = gid;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        const tabs = document.querySelectorAll('.tab');
+        const tabMap = { all: 0, fullbody: 1, torso: 2, pierna: 3 };
+        if (tabs[tabMap[gid]]) tabs[tabMap[gid]].classList.add('active');
+        buildRutinas();
+        // open the group
+        setTimeout(() => toggleGroup(gid, true), 50);
+      }
     }
 
     function showScreen(name) {

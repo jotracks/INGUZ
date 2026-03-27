@@ -2,45 +2,38 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>INGUZ App</title>
+<title>INGUZ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f1115;
-  color: white;
-}
+body { margin:0; font-family:Arial, sans-serif; background:#0f1115; color:white; }
+.screen { display:none; padding:20px; }
+.screen.active { display:block; }
 
-/* pantallas */
-.screen { display: none; padding: 20px; }
-.screen.active { display: block; }
-
-/* setup */
-input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: none;
+input, button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:6px;
+  border:none;
+  font-size:16px;
 }
 
 button {
-  margin-top: 15px;
-  padding: 12px;
-  width: 100%;
-  background: #00ff88;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
+  background:#00ff88;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-/* debug */
-pre {
-  background: #111;
-  padding: 10px;
-  border-radius: 6px;
+.card {
+  background:#1a1d24;
+  padding:15px;
+  border-radius:10px;
+  margin-top:10px;
 }
+
+#setup-err { color:red; margin-top:10px; }
+pre { background:#111; padding:10px; border-radius:6px; overflow:auto; }
 </style>
 </head>
 
@@ -49,10 +42,8 @@ pre {
 <!-- SETUP -->
 <div id="screen-setup" class="screen">
   <h2>Conectar con GitHub</h2>
-
   <input id="setup-token-inp" type="password" placeholder="github_pat_..." />
-  <div id="setup-err" style="display:none;color:red;margin-top:10px;"></div>
-
+  <div id="setup-err" style="display:none;"></div>
   <button onclick="guardarToken()">Entrar</button>
 </div>
 
@@ -60,17 +51,21 @@ pre {
 <div id="screen-home" class="screen">
   <h1>INGUZ</h1>
 
-  <button onclick="agregarDato()">Agregar dato de prueba</button>
-  <button onclick="resetApp()">Reset</button>
+  <div class="card">
+    <button onclick="agregarEjemplo()">Agregar entrenamiento</button>
+    <button onclick="resetApp()">Reset</button>
+  </div>
 
-  <h3>DATA:</h3>
-  <pre id="debug"></pre>
+  <div class="card">
+    <h3>DATA</h3>
+    <pre id="debug"></pre>
+  </div>
 </div>
 
 <script>
-/* ============================
+/* =========================
    CONFIG
-============================ */
+========================= */
 const GH_USER  = 'jotracks';
 const GH_REPO  = 'INGUZ';
 const GH_FILE  = 'data.json';
@@ -83,9 +78,9 @@ let ghSha = null;
 let syncPending = false;
 let syncTimer = null;
 
-/* ============================
+/* =========================
    DATA LOCAL
-============================ */
+========================= */
 function getData() {
   try {
     return JSON.parse(localStorage.getItem('inguz_data') || '{}');
@@ -104,9 +99,9 @@ function saveData(data) {
   syncTimer = setTimeout(() => pushToGitHub(data), 1000);
 }
 
-/* ============================
-   PUSH GITHUB
-============================ */
+/* =========================
+   PUSH GITHUB (FIX)
+========================= */
 async function pushToGitHub(data) {
   if (!GH_TOKEN || syncPending) return;
 
@@ -129,6 +124,7 @@ async function pushToGitHub(data) {
       content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))))
     };
 
+    // 🔥 FIX: solo mandar sha si existe
     if (ghSha) body.sha = ghSha;
 
     const res = await fetch(GH_API, {
@@ -154,9 +150,9 @@ async function pushToGitHub(data) {
   syncPending = false;
 }
 
-/* ============================
+/* =========================
    PULL
-============================ */
+========================= */
 async function pullFromGitHub() {
   if (!GH_TOKEN) return;
 
@@ -179,15 +175,17 @@ async function pullFromGitHub() {
   }
 }
 
-/* ============================
+/* =========================
    TOKEN
-============================ */
+========================= */
 function guardarToken() {
   const token = document.getElementById('setup-token-inp').value.trim();
   const err = document.getElementById('setup-err');
 
+  err.style.display = 'none';
+
   if (!token) {
-    err.textContent = 'Pegá un token';
+    err.textContent = 'Pegá un token válido';
     err.style.display = 'block';
     return;
   }
@@ -195,23 +193,35 @@ function guardarToken() {
   localStorage.setItem(GH_TOKEN_KEY, token);
   GH_TOKEN = token;
 
-  document.getElementById('screen-setup').classList.remove('active');
-  document.getElementById('screen-home').classList.add('active');
-
+  activarHome();
   pullFromGitHub();
 }
 
-/* ============================
-   APP
-============================ */
-function agregarDato() {
+/* =========================
+   UI
+========================= */
+function activarSetup() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-setup').classList.add('active');
+}
+
+function activarHome() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-home').classList.add('active');
+}
+
+/* =========================
+   APP DEMO
+========================= */
+function agregarEjemplo() {
   const d = getData();
 
   if (!d.historial) d.historial = [];
 
   d.historial.push({
     fecha: new Date().toISOString(),
-    valor: Math.floor(Math.random() * 100)
+    ejercicio: "Press banca",
+    peso: Math.floor(Math.random()*100)
   });
 
   saveData(d);
@@ -227,17 +237,17 @@ function resetApp() {
   location.reload();
 }
 
-/* ============================
-   INIT
-============================ */
+/* =========================
+   INIT (FIX TOKEN SCREEN)
+========================= */
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem(GH_TOKEN_KEY);
 
   if (!token) {
-    document.getElementById('screen-setup').classList.add('active');
+    activarSetup();
   } else {
     GH_TOKEN = token;
-    document.getElementById('screen-home').classList.add('active');
+    activarHome();
     pullFromGitHub();
   }
 

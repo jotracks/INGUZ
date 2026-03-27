@@ -362,7 +362,10 @@
     .history-box { padding: 16px 20px 0; }
     .history-title { color: var(--green); text-transform: uppercase; font-size: 11px; font-weight: 800; letter-spacing: 2px; margin-bottom: 10px; }
     .history-list { display: flex; flex-direction: column; gap: 6px; }
-    .history-item { background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; }
+    .history-item { background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; display: flex; align-items: flex-start; gap: 10px; }
+    .history-item-body { flex: 1; }
+    .history-delete { background: transparent; border: 1px solid #4d1a1a; border-radius: 8px; color: var(--red); font-size: 14px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+    .history-delete:active { background: #2a0a0a; }
     .history-date { font-size: 11px; color: var(--muted2); font-weight: 700; }
     .history-values { margin-top: 4px; font-size: 15px; font-weight: 700; }
     .history-note { margin-top: 4px; color: var(--muted2); font-size: 12px; font-style: italic; }
@@ -1202,18 +1205,35 @@
 
     function renderExerciseHistory(exId) {
       const wrap = document.getElementById('exercise-history-list');
-      const list = (getHistorial()[exId] || []).slice().reverse().slice(0, 8);
+      const allRegs = getHistorial()[exId] || [];
+      const list = allRegs.slice().reverse().slice(0, 8);
       if (!list.length) {
-        wrap.innerHTML = '<div class="history-item"><div class="history-date">Sin registros previos</div></div>';
+        wrap.innerHTML = '<div class="history-item"><div class="history-item-body"><div class="history-date">Sin registros previos</div></div></div>';
         return;
       }
-      wrap.innerHTML = list.map(item => `
-        <div class="history-item">
-          <div class="history-date">${item.fecha.slice(0, 10)}</div>
-          <div class="history-values">${item.series}×${item.reps} · <span style="color:var(--green)">${item.peso}kg</span></div>
-          ${item.comment ? `<div class="history-note">${item.comment}</div>` : ''}
-        </div>
-      `).join('');
+      wrap.innerHTML = list.map((item, i) => {
+        const realIdx = allRegs.length - 1 - i;
+        return `
+          <div class="history-item">
+            <div class="history-item-body">
+              <div class="history-date">${item.fecha.slice(0, 10)}</div>
+              <div class="history-values">${item.series}×${item.reps} · <span style="color:var(--green)">${item.peso}kg</span></div>
+              ${item.comment ? `<div class="history-note">${item.comment}</div>` : ''}
+            </div>
+            <button class="history-delete" onclick="deleteHistoryEntry('${exId}', ${realIdx})" title="Eliminar">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function deleteHistoryEntry(exId, idx) {
+      if (!APP.historial[exId]) return;
+      APP.historial[exId].splice(idx, 1);
+      await persistData();
+      renderExerciseHistory(exId);
+      buildRutinas();
+      updateHome();
+      showToast('Registro eliminado');
     }
 
     async function saveExerciseModal() {
@@ -1272,6 +1292,13 @@
         showToast('Completá todos los campos');
         return;
       }
+      // Bloquear fecha duplicada para el mismo ejercicio
+      const yaExiste = (APP.historial[currentExerciseId] || [])
+        .some(r => r.fecha.slice(0, 10) === fecha);
+      if (yaExiste) {
+        showToast('Ya hay un registro para esa fecha');
+        return;
+      }
       const item = {
         fecha: `${fecha}T12:00:00.000Z`,
         series: Number(series),
@@ -1289,7 +1316,6 @@
       updatePerfil();
       showToast('Registro retroactivo guardado');
       forceCloseRetroModal();
-      forceCloseExerciseModal();
     }
 
     function openTimer() {

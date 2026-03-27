@@ -973,10 +973,158 @@ input, select, textarea, button { font-style: normal; }
   cursor: pointer; flex-shrink: 0;
 }
 .retro-delete-btn svg line { stroke: var(--red); }
+
+/* ═══════════════════════════
+   SETUP TOKEN SCREEN
+═══════════════════════════ */
+#screen-setup {
+  display: none;
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 1000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 28px;
+}
+#screen-setup.active { display: flex; }
+.setup-logo {
+  margin-bottom: 32px; text-align: center;
+}
+.setup-logo svg { width: 52px; height: 52px; margin: 0 auto 10px; display:block; }
+.setup-title {
+  font-family: var(--font-d); font-size: 38px;
+  letter-spacing: 4px; color: #fff; line-height:1;
+}
+.setup-sub {
+  font-size: 12px; color: var(--green);
+  letter-spacing: 2px; font-weight: 700;
+  text-transform: uppercase; margin-top: 4px;
+}
+.setup-card {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 22px;
+  padding: 26px 22px;
+}
+.setup-card-title {
+  font-family: var(--font-d); font-size: 22px;
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+.setup-card-desc {
+  font-size: 13px; color: var(--muted2);
+  line-height: 1.5; margin-bottom: 22px;
+}
+.setup-card-desc a {
+  color: var(--green); text-decoration: none; font-weight: 700;
+}
+.setup-steps {
+  margin-bottom: 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.setup-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: var(--muted2); line-height: 1.4;
+}
+.setup-step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(126,224,79,.15); border: 1px solid rgba(126,224,79,.3);
+  display: flex; align-items:center; justify-content:center;
+  font-size: 11px; font-weight: 700; color: var(--green);
+  flex-shrink: 0; margin-top: 1px;
+}
+.setup-inp-lbl {
+  font-size: 11px; font-weight: 700; color: var(--muted2);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 7px; display: block;
+}
+.setup-inp {
+  width: 100%;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 14px 16px;
+  color: var(--text); font-size: 14px; font-family: var(--font-b);
+  outline: none; transition: border-color .2s;
+  letter-spacing: 1px;
+}
+.setup-inp:focus { border-color: var(--green); }
+.setup-inp::placeholder { color: var(--muted); letter-spacing: 0; font-size:13px; }
+.setup-btn {
+  width: 100%; margin-top: 12px;
+  background: var(--green); color: #000;
+  border: none; border-radius: 12px; padding: 16px;
+  font-size: 16px; font-weight: 700;
+  font-family: var(--font-b); cursor: pointer;
+  transition: opacity .15s;
+}
+.setup-btn:active { opacity: .85; }
+.setup-err {
+  background: #2a0a0a; border: 1px solid #5a1a1a;
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 13px; color: #ff6b6b;
+  margin-top: 10px; display: none; text-align: center;
+  line-height: 1.4;
+}
+.setup-skip {
+  margin-top: 14px; text-align: center;
+  font-size: 12px; color: var(--muted2); cursor: pointer;
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
 <div class="phone">
+
+
+  <!-- ═══════════════════════════
+       SETUP — Token GitHub
+  ═══════════════════════════ -->
+  <div id="screen-setup">
+    <div class="setup-logo">
+      <svg viewBox="0 0 52 52" fill="none">
+        <line x1="6" y1="6" x2="22" y2="22" stroke="#7ee04f" stroke-width="4" stroke-linecap="round"/>
+        <line x1="22" y1="6" x2="6" y2="22" stroke="#7ee04f" stroke-width="4" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="46" y2="46" stroke="#7ee04f" stroke-width="4" stroke-linecap="round"/>
+        <line x1="46" y1="30" x2="30" y2="46" stroke="#7ee04f" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div class="setup-title">INGUZ</div>
+      <div class="setup-sub">Box Training</div>
+    </div>
+
+    <div class="setup-card">
+      <div class="setup-card-title">Conectar con GitHub</div>
+      <div class="setup-card-desc">
+        Para guardar tu historial entre dispositivos necesitás un token de acceso. Solo se hace una vez.
+      </div>
+
+      <div class="setup-steps">
+        <div class="setup-step">
+          <div class="setup-step-num">1</div>
+          <span>Andá a <strong style="color:#fff;">github.com</strong> → tu foto → <strong style="color:#fff;">Settings</strong></span>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">2</div>
+          <span>Bajá hasta <strong style="color:#fff;">Developer settings → Personal access tokens → Tokens (classic)</strong></span>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">3</div>
+          <span>Click <strong style="color:#fff;">Generate new token (classic)</strong>, tildá solo <strong style="color:#fff;">repo</strong> y generá</span>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">4</div>
+          <span>Pegá el token acá abajo</span>
+        </div>
+      </div>
+
+      <label class="setup-inp-lbl">Tu token de GitHub</label>
+      <input class="setup-inp" type="password" id="setup-token-inp"
+        placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="setup-err" id="setup-err"></div>
+      <button class="setup-btn" onclick="guardarToken()">Conectar y entrar</button>
+      <div class="setup-skip" onclick="entrarSinGitHub()">Usar sin sincronización (solo local)</div>
+    </div>
+  </div>
 
   <!-- ═══ TOAST ═══ -->
   <div class="toast" id="toast"></div>
@@ -1668,7 +1816,8 @@ const PLAN_SEMANAL = {
 const GH_USER  = 'jotracks';
 const GH_REPO  = 'INGUZ';
 const GH_FILE  = 'data.json';
-const GH_TOKEN = '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';
+const GH_TOKEN_KEY = 'inguz_gh_token';
+let GH_TOKEN = localStorage.getItem(GH_TOKEN_KEY) || '';
 const GH_API   = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
 
 let ghSha = null;        // SHA del archivo en GitHub (necesario para actualizarlo)
@@ -2335,15 +2484,93 @@ function resetApp() {
 /* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', async () => {
+
+/* ═══════════════════════════════════════
+   SETUP — Token GitHub
+═══════════════════════════════════════ */
+async function guardarToken() {
+  const inp = document.getElementById('setup-token-inp');
+  const token = inp.value.trim();
+  const errEl = document.getElementById('setup-err');
+  errEl.style.display = 'none';
+
+  if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+    errEl.textContent = 'El token no parece válido. Debe empezar con ghp_';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.querySelector('.setup-btn');
+  btn.textContent = 'Verificando...';
+  btn.style.opacity = '.7';
+
+  // Verificar que el token funciona
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`,
+      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (res.status === 401) {
+      errEl.textContent = 'Token inválido o sin permisos. Verificá que tildaste "repo" al crearlo.';
+      errEl.style.display = 'block';
+      btn.textContent = 'Conectar y entrar';
+      btn.style.opacity = '1';
+      return;
+    }
+    if (res.status === 404) {
+      // repo o archivo no encontrado — igual guardamos, se creará
+    }
+  } catch(e) {
+    errEl.textContent = 'Error de red. Verificá tu conexión.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Conectar y entrar';
+    btn.style.opacity = '1';
+    return;
+  }
+
+  // Guardar en localStorage
+  localStorage.setItem(GH_TOKEN_KEY, token);
+  GH_TOKEN = token;
+  btn.textContent = 'Conectar y entrar';
+  btn.style.opacity = '1';
+  iniciarApp();
+}
+
+function entrarSinGitHub() {
+  localStorage.setItem(GH_TOKEN_KEY, 'offline');
+  GH_TOKEN = 'offline';
+  iniciarApp();
+}
+
+function mostrarSetup() {
+  document.getElementById('screen-setup').classList.add('active');
+}
+
+function ocultarSetup() {
+  document.getElementById('screen-setup').classList.remove('active');
+}
+
+async function iniciarApp() {
+  ocultarSetup();
   buildRutinas();
   updateHome();
-  // Sincronizar con GitHub al arrancar
-  showSyncDot('ok');
-  const pulled = await pullFromGitHub();
-  if (pulled) {
-    buildRutinas();
-    updateHome();
+  if (GH_TOKEN && GH_TOKEN !== 'offline') {
+    const pulled = await pullFromGitHub();
+    if (pulled) {
+      buildRutinas();
+      updateHome();
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const savedToken = localStorage.getItem(GH_TOKEN_KEY);
+  if (!savedToken) {
+    // Primera vez — mostrar pantalla de setup
+    mostrarSetup();
+  } else {
+    GH_TOKEN = savedToken;
+    iniciarApp();
   }
 });
 

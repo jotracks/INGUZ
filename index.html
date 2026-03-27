@@ -427,17 +427,17 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .sheet-sub strong{color:var(--text)}
 .ex-meta{display:flex;gap:8px;align-items:stretch;padding:0 20px 16px;border-bottom:1px solid var(--border)}
 .ex-meta-pill{
-  flex:1;background:var(--s2);border:1px solid var(--border2);
+  flex:1;background:var(--gbg);border:1px solid var(--gborder);
   border-radius:14px;padding:12px 8px;
   display:flex;flex-direction:column;align-items:center;gap:4px;
 }
-.ex-meta-lbl{font-size:10px;font-weight:800;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px}
-.ex-meta-val{font-family:var(--fd);font-size:40px;line-height:1;color:var(--text);letter-spacing:1px}
+.ex-meta-lbl{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1.5px}
+.ex-meta-val{font-family:var(--fd);font-size:40px;line-height:1;color:var(--green);letter-spacing:1px}
 .sheet-grid{display:flex;gap:10px;padding:16px 20px 14px}
 .sheet-grid .field{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
 .srp-label{
-  font-family:var(--fd);font-size:42px;line-height:1;font-weight:400;
-  color:var(--muted2);letter-spacing:1px;
+  font-family:var(--fd);font-size:32px;line-height:1;font-weight:400;
+  color:var(--muted2);letter-spacing:1px;text-align:center;width:100%;
 }
 .srp-select{
   width:100%;background:var(--s2);border:2px solid var(--border2);
@@ -447,8 +447,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   appearance:none;-webkit-appearance:none;cursor:pointer;
   transition:border-color .2s,background .2s;
 }
-.srp-select:focus{border-color:var(--green);background:var(--gbg)}
-.srp-select.filled{border-color:var(--green);color:var(--green);background:var(--gbg)}
+.srp-select:focus{border-color:var(--border2);background:var(--s2)}
+.srp-select.filled{border-color:var(--border2);color:var(--text);background:var(--s2)}
 .history-box{padding:16px 20px 0}
 .history-title{color:var(--green);text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:10px}
 .history-list{display:flex;flex-direction:column;gap:6px}

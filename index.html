@@ -333,8 +333,19 @@
       box-shadow: 0 6px 24px rgba(126,224,79,.25);
     }
     .timer-panel {
-      position: fixed; inset: 0; background: var(--green); color: #000; z-index: 110; display:none; align-items:center; justify-content:center; flex-direction:column; padding:40px 28px;
+      position: fixed;
+      inset: 0;
+      background: #7a1010;
+      color: #000;
+      z-index: 110;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:40px 28px;
+      transition: background .25s ease;
     }
+    .timer-panel.done { background: var(--green); }
     .timer-panel.show { display:flex; }
     .timer-title { position:absolute; top:20px; left:24px; right:24px; display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color: rgba(0,0,0,.6); }
     .timer-x { border:none; background:none; font-size:28px; color: rgba(0,0,0,.6); cursor:pointer; }
@@ -628,10 +639,10 @@
     const PLAN_SEMANAL = {
       0: null,
       1: 'fullbody',
-      2: 'torso',
-      3: 'pierna',
-      4: 'fullbody',
-      5: 'torso',
+      2: null,
+      3: 'torso',
+      4: null,
+      5: 'pierna',
       6: null
     };
 
@@ -1151,6 +1162,7 @@
     }
 
     function openTimer() {
+      document.getElementById('timer-panel').classList.remove('done');
       document.getElementById('timer-panel').classList.add('show');
       document.getElementById('timer-custom-input').value = timerTotal;
       updateTimerDisplay();
@@ -1170,6 +1182,31 @@
       document.getElementById('timer-display').textContent = `${mm}:${ss}`;
       document.getElementById('timer-start-btn').textContent = timerInterval ? 'Pausar' : 'Iniciar';
     }
+    function playTimerAlarm() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const notes = [880, 988, 1174];
+        let time = ctx.currentTime;
+        notes.concat(notes).forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.0001, time);
+          gain.gain.exponentialRampToValueAtTime(0.18, time + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.22);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(time);
+          osc.stop(time + 0.24);
+          time += 0.16;
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     function toggleTimer() {
       if (timerInterval) {
         clearInterval(timerInterval);
@@ -1182,12 +1219,15 @@
         timerTotal = custom;
         timerRemaining = custom;
       }
+      document.getElementById('timer-panel').classList.remove('done');
       timerInterval = setInterval(() => {
         timerRemaining -= 1;
         if (timerRemaining <= 0) {
           timerRemaining = 0;
           clearInterval(timerInterval);
           timerInterval = null;
+          document.getElementById('timer-panel').classList.add('done');
+          playTimerAlarm();
           showToast('Descanso terminado');
         }
         updateTimerDisplay();
@@ -1199,6 +1239,7 @@
       timerInterval = null;
       timerTotal = Number(document.getElementById('timer-custom-input').value || 120);
       timerRemaining = timerTotal;
+      document.getElementById('timer-panel').classList.remove('done');
       updateTimerDisplay();
     }
 

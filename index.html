@@ -1836,7 +1836,10 @@ function saveData(data) {
   localStorage.setItem('inguz_data', JSON.stringify(data));
   // Luego sincronizar a GitHub con debounce de 1.5s
   clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => pushToGitHub(data), 1500);
+  if (!GH_TOKEN || GH_TOKEN === 'offline') return;
+
+clearTimeout(syncTimer);
+syncTimer = setTimeout(() => pushToGitHub(data), 1500);
 }
 
 async function pushToGitHub(data) {
@@ -1858,10 +1861,13 @@ async function pushToGitHub(data) {
     if (dataParaGH.perfil) dataParaGH.perfil.foto = '';
 
     const body = {
-      message: `update ${new Date().toISOString().slice(0,10)}`,
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(dataParaGH, null, 2)))),
-      sha: ghSha
-    };
+  message: `update ${new Date().toISOString().slice(0,10)}`,
+  content: btoa(unescape(encodeURIComponent(JSON.stringify(dataParaGH, null, 2))))
+};
+
+if (ghSha) {
+  body.sha = ghSha;
+}
     const putRes = await fetch(GH_API, {
       method: 'PUT',
       headers: {

@@ -99,6 +99,202 @@ function saveData(data) {
   syncTimer = setTimeout(() => pushToGitHub(data), 1000);
 }
 
+
+
+<script>
+/* =========================
+   GITHUB CONFIG
+========================= */
+const GH_USER  = 'jotracks';
+const GH_REPO  = 'INGUZ';
+const GH_FILE  = 'data.json';
+const GH_TOKEN_KEY = 'inguz_gh_token';
+
+let GH_TOKEN = localStorage.getItem(GH_TOKEN_KEY) || '';
+const GH_API = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
+
+let ghSha = null;
+let syncPending = false;
+let syncTimer = null;
+
+/* =========================
+   DATA WRAPPER (HOOK)
+========================= */
+const originalSaveData = window.saveData;
+
+window.saveData = function(data){
+  if(originalSaveData) originalSaveData(data);
+
+  localStorage.setItem('inguz_data', JSON.stringify(data));
+
+  if (!GH_TOKEN) return;
+
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => pushToGitHub(data), 1200);
+}
+
+/* =========================
+   PUSH (FIX)
+========================= */
+async function pushToGitHub(data) {
+  if (!GH_TOKEN || syncPending) return;
+
+  syncPending = true;
+
+  try {
+    if (!ghSha) {
+      const res = await fetch(GH_API, {
+        headers: { Authorization: `token ${GH_TOKEN}` }
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        ghSha = json.sha;
+      }
+    }
+
+    const clean = JSON.parse(JSON.stringify(data));
+    if (clean.perfil) clean.perfil.foto = '';
+
+    const body = {
+      message: 'update',
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(clean, null, 2))))
+    };
+
+    // 🔥 FIX CLAVE
+    if (ghSha) body.sha = ghSha;
+
+    const res = await fetch(GH_API, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${GH_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      console.error(await res.text());
+      setSyncDot('err');
+    } else {
+      const json = await res.json();
+      ghSha = json.content.sha;
+      setSyncDot('ok');
+    }
+
+  } catch (e) {
+    console.error(e);
+    setSyncDot('err');
+  }
+
+  syncPending = false;
+}
+
+/* =========================
+   PULL
+========================= */
+async function pullFromGitHub() {
+  if (!GH_TOKEN) return;
+
+  try {
+    const res = await fetch(GH_API + '?t=' + Date.now());
+
+    if (!res.ok) return;
+
+    const json = await res.json();
+    ghSha = json.sha;
+
+    const decoded = decodeURIComponent(escape(atob(json.content)));
+    const remote = JSON.parse(decoded);
+
+    localStorage.setItem('inguz_data', JSON.stringify(remote));
+
+    location.reload();
+
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/* =========================
+   TOKEN SETUP
+========================= */
+function guardarToken() {
+  const token = document.getElementById('setup-token-inp').value.trim();
+  const err = document.getElementById('setup-err');
+
+  err.style.display = 'none';
+
+  if (!token) {
+    err.textContent = 'Pegá un token válido';
+    err.style.display = 'block';
+    return;
+  }
+
+  localStorage.setItem(GH_TOKEN_KEY, token);
+  GH_TOKEN = token;
+
+  document.getElementById('screen-setup').classList.remove('active');
+  document.getElementById('screen-home').classList.add('active');
+
+  pullFromGitHub();
+}
+
+function entrarSinGitHub(){
+  localStorage.setItem(GH_TOKEN_KEY, 'offline');
+  location.reload();
+}
+
+/* =========================
+   INIT (FIX)
+========================= */
+document.addEventListener('DOMContentLoaded', () => {
+
+  const token = localStorage.getItem(GH_TOKEN_KEY);
+
+  // apagar todas
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  if (!token) {
+    document.getElementById('screen-setup').classList.add('active');
+  } else {
+    GH_TOKEN = token === 'offline' ? '' : token;
+    document.getElementById('screen-home').classList.add('active');
+
+    if (GH_TOKEN) pullFromGitHub();
+  }
+
+});
+
+/* =========================
+   SYNC DOT
+========================= */
+function setSyncDot(state){
+  const dot = document.getElementById('sync-dot');
+  if(!dot) return;
+
+  if(state==='ok'){
+    dot.style.background = '#7ee04f';
+    dot.style.opacity = '1';
+  }else{
+    dot.style.background = '#ff6b6b';
+    dot.style.opacity = '1';
+  }
+
+  setTimeout(()=>{
+    dot.style.opacity = '0.3';
+  },1500);
+}
+
+/* =========================
+   RESET
+========================= */
+function resetApp(){
+  localStorage.clear();
+  location.reload();
+}
+</script>
+
 /* =========================
    PUSH GITHUB (FIX)
 ========================= */

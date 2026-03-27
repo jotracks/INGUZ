@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 <style>
-
 /* ═══════════════════════════
    VARIABLES & RESET
 ═══════════════════════════ */
@@ -1071,10 +1070,6 @@ input, select, textarea, button { font-style: normal; }
   font-size: 12px; color: var(--muted2); cursor: pointer;
   text-decoration: underline;
 }
-
-/* Login setup tweaks */
-#screen-setup .setup-card-desc{margin-bottom:16px;}
-
 </style>
 </head>
 <body>
@@ -1097,24 +1092,37 @@ input, select, textarea, button { font-style: normal; }
     </div>
 
     <div class="setup-card">
-      <div class="setup-card-title">Ingresar</div>
+      <div class="setup-card-title">Conectar con GitHub</div>
       <div class="setup-card-desc">
-        Entrá con tu usuario y contraseña. Si hay un token configurado, la sincronización con GitHub se activa sola.
+        Para guardar tu historial entre dispositivos necesitás un token de acceso. Solo se hace una vez.
       </div>
 
-      <label class="setup-inp-lbl">Usuario</label>
-      <input class="setup-inp" type="text" id="setup-user-inp"
-        placeholder="admin"
-        autocomplete="username" autocorrect="off" spellcheck="false">
+      <div class="setup-steps">
+        <div class="setup-step">
+          <div class="setup-step-num">1</div>
+          <span>Andá a <strong style="color:#fff;">github.com</strong> → tu foto → <strong style="color:#fff;">Settings</strong></span>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">2</div>
+          <span>Bajá hasta <strong style="color:#fff;">Developer settings → Personal access tokens → Tokens (classic)</strong></span>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">3</div>
+          <span>Click <strong style="color:#fff;">Generate new token (classic)</strong>, tildá solo <strong style="color:#fff;">repo</strong> y generá</span>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">4</div>
+          <span>Pegá el token acá abajo</span>
+        </div>
+      </div>
 
-      <label class="setup-inp-lbl" style="margin-top:12px;">Contraseña</label>
-      <input class="setup-inp" type="password" id="setup-pass-inp"
-        placeholder="123456"
-        autocomplete="current-password" autocorrect="off" spellcheck="false">
-
+      <label class="setup-inp-lbl">Tu token de GitHub</label>
+      <input class="setup-inp" type="password" id="setup-token-inp"
+        placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+        autocomplete="off" autocorrect="off" spellcheck="false">
       <div class="setup-err" id="setup-err"></div>
-      <button class="setup-btn" onclick="loginApp()">Entrar</button>
-      <div class="setup-skip" onclick="entrarSinGitHub()">Entrar sin sincronización</div>
+      <button class="setup-btn" onclick="guardarToken()">Conectar y entrar</button>
+      <div class="setup-skip" onclick="entrarSinGitHub()">Usar sin sincronización (solo local)</div>
     </div>
   </div>
 
@@ -1425,26 +1433,6 @@ input, select, textarea, button { font-style: normal; }
             <option value="Tonificar">Tonificar</option>
             <option value="Rendimiento deportivo">Rendimiento deportivo</option>
           </select>
-        </div>
-      </div>
-
-      <div class="pf-card">
-        <div class="pf-card-title">Acceso y sincronización</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div class="pf-row">
-            <div class="pf-field">
-              <div class="pf-lbl">Usuario</div>
-              <input class="pf-inp" type="text" id="pf-login-user" placeholder="admin">
-            </div>
-            <div class="pf-field">
-              <div class="pf-lbl">Contraseña</div>
-              <input class="pf-inp" type="password" id="pf-login-pass" placeholder="123456">
-            </div>
-          </div>
-          <div class="pf-field">
-            <div class="pf-lbl">Token GitHub</div>
-            <input class="pf-inp" type="password" id="pf-gh-token" placeholder="github_pat_...">
-          </div>
         </div>
       </div>
 
@@ -1839,23 +1827,27 @@ let syncTimer   = null;  // debounce
 // ── Leer datos (primero local, luego sincroniza con GitHub) ──
 function getData() {
   try {
-    return JSON.parse(localStorage.getItem('inguz_data') || '{}');
-  } catch(e) { return {}; }
+    const parsed = JSON.parse(localStorage.getItem('inguz_data') || '{}');
+    if (!parsed || typeof parsed !== 'object') throw new Error('invalid');
+    if (!parsed.perfil || typeof parsed.perfil !== 'object') parsed.perfil = {};
+    if (!parsed.historial || typeof parsed.historial !== 'object' || Array.isArray(parsed.historial)) parsed.historial = {};
+    return parsed;
+  } catch(e) {
+    return { perfil: {}, historial: {} };
+  }
 }
 
 function saveData(data) {
-  // Siempre guardar local primero (instantáneo)
   localStorage.setItem('inguz_data', JSON.stringify(data));
-  // Luego sincronizar a GitHub con debounce de 1.5s
+  if (!GH_TOKEN || GH_TOKEN === 'offline') return;
   clearTimeout(syncTimer);
   syncTimer = setTimeout(() => pushToGitHub(data), 1500);
 }
 
 async function pushToGitHub(data) {
-  if (syncPending) return;
+  if (!GH_TOKEN || GH_TOKEN === 'offline' || syncPending) return;
   syncPending = true;
   try {
-    // Obtener SHA actual si no lo tenemos
     if (!ghSha) {
       const res = await fetch(GH_API, {
         headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -1863,17 +1855,20 @@ async function pushToGitHub(data) {
       if (res.ok) {
         const json = await res.json();
         ghSha = json.sha;
+      } else if (res.status !== 404) {
+        throw new Error('No se pudo leer el archivo remoto');
       }
     }
-    // No guardar la foto en GitHub (demasiado pesada, queda solo en localStorage)
+
     const dataParaGH = JSON.parse(JSON.stringify(data));
     if (dataParaGH.perfil) dataParaGH.perfil.foto = '';
 
     const body = {
       message: `update ${new Date().toISOString().slice(0,10)}`,
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(dataParaGH, null, 2)))),
-      sha: ghSha
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(dataParaGH, null, 2))))
     };
+    if (ghSha) body.sha = ghSha;
+
     const putRes = await fetch(GH_API, {
       method: 'PUT',
       headers: {
@@ -1888,30 +1883,35 @@ async function pushToGitHub(data) {
       ghSha = putJson.content.sha;
       showSyncDot('ok');
     } else {
+      console.error(await putRes.text());
       showSyncDot('err');
     }
   } catch(e) {
+    console.error(e);
     showSyncDot('err');
   }
   syncPending = false;
 }
 
 async function pullFromGitHub() {
+  if (!GH_TOKEN || GH_TOKEN === 'offline') return false;
   try {
     const res = await fetch(GH_API + '?t=' + Date.now(), {
       headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
     });
-    if (!res.ok) return;
+    if (res.status === 404) return false;
+    if (!res.ok) return false;
     const json = await res.json();
     ghSha = json.sha;
-    const decoded = decodeURIComponent(escape(atob(json.content.replace(/
+    const decoded = decodeURIComponent(escape(atob((json.content || '').replace(/
 /g,''))));
-    const remoteData = JSON.parse(decoded);
-    // Merge: keep local foto (not stored on GH), override everything else
+    const remoteData = JSON.parse(decoded || '{}');
     const localData = getData();
     const foto = localData.perfil ? localData.perfil.foto : '';
+    if (!remoteData.perfil || typeof remoteData.perfil !== 'object') remoteData.perfil = {};
+    if (!remoteData.historial || typeof remoteData.historial !== 'object' || Array.isArray(remoteData.historial)) remoteData.historial = {};
     localStorage.setItem('inguz_data', JSON.stringify(remoteData));
-    if (foto && remoteData.perfil) {
+    if (foto) {
       const d = getData();
       d.perfil.foto = foto;
       localStorage.setItem('inguz_data', JSON.stringify(d));
@@ -1919,6 +1919,7 @@ async function pullFromGitHub() {
     showSyncDot('ok');
     return true;
   } catch(e) {
+    console.error(e);
     return false;
   }
 }
@@ -2489,6 +2490,7 @@ function applyCrop() {
 function resetApp() {
   if (confirm('¿Seguro? Se van a borrar todos tus datos y el historial.')) {
     localStorage.removeItem('inguz_data');
+    localStorage.removeItem(GH_TOKEN_KEY);
     location.reload();
   }
 }
@@ -2507,7 +2509,7 @@ async function guardarToken() {
   errEl.style.display = 'none';
 
   if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
-    errEl.textContent = 'El token no parece válido. Debe empezar con ghp_';
+    errEl.textContent = 'El token no parece válido.';
     errEl.style.display = 'block';
     return;
   }
@@ -2516,21 +2518,17 @@ async function guardarToken() {
   btn.textContent = 'Verificando...';
   btn.style.opacity = '.7';
 
-  // Verificar que el token funciona
   try {
     const res = await fetch(
       `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`,
       { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
     );
-    if (res.status === 401) {
-      errEl.textContent = 'Token inválido o sin permisos. Verificá que tildaste "repo" al crearlo.';
+    if (res.status === 401 || res.status === 403) {
+      errEl.textContent = 'Token inválido o sin permisos.';
       errEl.style.display = 'block';
       btn.textContent = 'Conectar y entrar';
       btn.style.opacity = '1';
       return;
-    }
-    if (res.status === 404) {
-      // repo o archivo no encontrado — igual guardamos, se creará
     }
   } catch(e) {
     errEl.textContent = 'Error de red. Verificá tu conexión.';
@@ -2540,12 +2538,11 @@ async function guardarToken() {
     return;
   }
 
-  // Guardar en localStorage
   localStorage.setItem(GH_TOKEN_KEY, token);
   GH_TOKEN = token;
   btn.textContent = 'Conectar y entrar';
   btn.style.opacity = '1';
-  iniciarApp();
+  await iniciarApp();
 }
 
 function entrarSinGitHub() {
@@ -2555,1141 +2552,8 @@ function entrarSinGitHub() {
 }
 
 function mostrarSetup() {
-  document.getElementById('screen-setup').classList.add('active');
-}
-
-function ocultarSetup() {
-  document.getElementById('screen-setup').classList.remove('active');
-}
-
-async function iniciarApp() {
-  ocultarSetup();
-  buildRutinas();
-  updateHome();
-  if (GH_TOKEN && GH_TOKEN !== 'offline') {
-    const pulled = await pullFromGitHub();
-    if (pulled) {
-      buildRutinas();
-      updateHome();
-    }
-  }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const savedToken = localStorage.getItem(GH_TOKEN_KEY);
-  if (!savedToken) {
-    // Primera vez — mostrar pantalla de setup
-    mostrarSetup();
-  } else {
-    GH_TOKEN = savedToken;
-    iniciarApp();
-  }
-});
-
-
-/* ═══════════════════════════════════════
-   TIMER DE DESCANSO
-═══════════════════════════════════════ */
-let timerTotal    = 60;
-let timerLeft     = 60;
-let timerRunning  = false;
-let timerInterval = null;
-let timerPanelOpen = false;
-
-function toggleTimerPanel() {
-  timerPanelOpen = !timerPanelOpen;
-  document.getElementById('timer-panel').classList.toggle('show', timerPanelOpen);
-}
-
-function setTimerPreset(secs, el) {
-  document.querySelectorAll('.timer-preset').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('timer-custom-inp').value = '';
-  if (!timerRunning) {
-    timerTotal = secs;
-    timerLeft  = secs;
-    updateTimerUI();
-  }
-}
-
-function setTimerCustom(val) {
-  const secs = parseInt(val);
-  if (isNaN(secs) || secs < 5) return;
-  document.querySelectorAll('.timer-preset').forEach(p => p.classList.remove('active'));
-  if (!timerRunning) {
-    timerTotal = secs;
-    timerLeft  = secs;
-    updateTimerUI();
-  }
-}
-
-function toggleTimer() {
-  if (timerRunning) {
-    pauseTimer();
-  } else {
-    startTimer();
-  }
-}
-
-function startTimer() {
-  if (timerLeft <= 0) { timerLeft = timerTotal; }
-  timerRunning = true;
-  document.getElementById('timer-start-btn').textContent = 'PAUSAR';
-  document.getElementById('timer-fab-btn').classList.add('running');
-  timerInterval = setInterval(tickTimer, 1000);
-}
-
-function pauseTimer() {
-  timerRunning = false;
-  clearInterval(timerInterval);
-  document.getElementById('timer-start-btn').textContent = 'CONTINUAR';
-  document.getElementById('timer-fab-btn').classList.remove('running');
-}
-
-function resetTimer() {
-  pauseTimer();
-  timerLeft = timerTotal;
-  document.getElementById('timer-start-btn').textContent = 'INICIAR';
-  updateTimerUI();
-}
-
-function tickTimer() {
-  timerLeft--;
-  updateTimerUI();
-  if (timerLeft <= 0) {
-    finishTimer();
-  }
-}
-
-function finishTimer() {
-  clearInterval(timerInterval);
-  timerRunning = false;
-  timerLeft = 0;
-  document.getElementById('timer-start-btn').textContent = 'INICIAR';
-  document.getElementById('timer-fab-btn').classList.remove('running');
-  updateTimerUI();
-  // Vibrar si disponible
-  if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-  showToast('¡Descanso terminado! A la siguiente serie');
-}
-
-const RING_CIRCUMFERENCE = 615.75; // 2 * π * 98
-
-function updateTimerUI() {
-  const mins = Math.floor(timerLeft / 60);
-  const secs = timerLeft % 60;
-  const str  = `${mins}:${secs.toString().padStart(2,'0')}`;
-  const pct  = timerTotal > 0 ? (timerLeft / timerTotal) : 1;
-  const warn = timerLeft <= 10 && timerLeft > 0;
-
-  document.getElementById('timer-display').textContent = str;
-  document.getElementById('timer-display').className = 'timer-display' + (warn ? ' warning' : '');
-  document.getElementById('timer-fab-time').textContent = str;
-
-  // SVG ring
-  const ring = document.getElementById('timer-ring-fg');
-  if (ring) {
-    const offset = RING_CIRCUMFERENCE * (1 - pct);
-    ring.style.strokeDashoffset = offset;
-    ring.className = 'timer-ring-fg' + (warn ? ' warning' : '');
-  }
-}
-
-
-
-/* ═══════════════════════════════════════
-   CARGA RETROACTIVA
-═══════════════════════════════════════ */
-let retroExId = null;
-
-function abrirRetro() {
-  retroExId = modalExId;
-  // Nombre del ejercicio
-  let exNombre = '';
-  Object.values(RUTINAS).forEach(g => {
-    const found = g.ejercicios.find(e => e.id === retroExId);
-    if (found) exNombre = found.nombre;
-  });
-  document.getElementById('retro-ex-title').textContent = exNombre.toUpperCase();
-
-  // Fecha máx = ayer
-  const ayer = new Date();
-  ayer.setDate(ayer.getDate() - 1);
-  const maxDate = ayer.toISOString().slice(0,10);
-  const fechaInp = document.getElementById('retro-fecha');
-  fechaInp.max = maxDate;
-  fechaInp.value = maxDate; // default = ayer
-
-  // Limpiar selects
-  document.getElementById('retro-series').value  = '';
-  document.getElementById('retro-reps').value    = '';
-  document.getElementById('retro-peso').value    = '';
-  document.getElementById('retro-comment').value = '';
-
-  // Mostrar registros ya cargados para este ejercicio
-  renderRetroLoaded();
-
-  document.getElementById('retro-overlay').classList.add('show');
-}
-
-function renderRetroLoaded() {
-  const hist = getHistorial();
-  const registros = hist[retroExId] || [];
-  // Solo los que no son de hoy (los retroactivos)
-  const hoy = new Date().toISOString().slice(0,10);
-  const retros = registros.filter(r => r.fecha !== hoy)
-    .slice().sort((a,b) => b.fecha.localeCompare(a.fecha))
-    .slice(0, 6);
-
-  const wrap = document.getElementById('retro-loaded-wrap');
-  const list = document.getElementById('retro-loaded-list');
-
-  if (retros.length === 0) {
-    wrap.style.display = 'none';
-    return;
-  }
-  wrap.style.display = 'block';
-
-  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  list.innerHTML = retros.map((r, i) => {
-    const [y,m,d] = r.fecha.split('-');
-    const fechaLabel = `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
-    const idx = registros.indexOf(r);
-    return `
-    <div class="retro-loaded-item">
-      <div class="retro-loaded-info">
-        <div class="retro-loaded-date">${fechaLabel}</div>
-        <div class="retro-loaded-vals">
-          <span>${r.series}</span> series · <span>${r.reps}</span> reps · <span>${r.peso}</span> kg
-          ${r.comentario ? `<div style="font-size:11px;color:var(--muted2);margin-top:2px;font-style:italic;">${r.comentario}</div>` : ''}
-        </div>
-      </div>
-      <button class="retro-delete-btn" onclick="eliminarRetro(${idx})" title="Eliminar">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>`;
-  }).join('');
-}
-
-function guardarRetro() {
-  const fecha    = document.getElementById('retro-fecha').value;
-  const series   = document.getElementById('retro-series').value;
-  const reps     = document.getElementById('retro-reps').value;
-  const peso     = document.getElementById('retro-peso').value;
-  const comentario = document.getElementById('retro-comment').value.trim();
-
-  if (!fecha)  { showToast('Elegí la fecha'); return; }
-  if (!series) { showToast('Elegí las series'); return; }
-  if (!reps)   { showToast('Elegí las reps'); return; }
-  if (!peso)   { showToast('Elegí el peso'); return; }
-
-  // No permitir fecha futura ni hoy
-  const hoy = new Date().toISOString().slice(0,10);
-  if (fecha >= hoy) { showToast('Solo fechas anteriores a hoy'); return; }
-
-  const hist = getHistorial();
-  if (!hist[retroExId]) hist[retroExId] = [];
-  hist[retroExId].push({ fecha, series, reps, peso, comentario, retro: true });
-  // Ordenar por fecha
-  hist[retroExId].sort((a,b) => a.fecha.localeCompare(b.fecha));
-  saveHistorial(hist);
-
-  showToast('Registro cargado');
-
-  // Reset form para cargar otro
-  document.getElementById('retro-series').value  = '';
-  document.getElementById('retro-reps').value    = '';
-  document.getElementById('retro-peso').value    = '';
-  document.getElementById('retro-comment').value = '';
-
-  renderRetroLoaded();
-  // Actualizar historial en modal principal también
-  renderModalHistorial(retroExId);
-  refreshRutinas();
-}
-
-function eliminarRetro(idx) {
-  const hist = getHistorial();
-  if (!hist[retroExId]) return;
-  hist[retroExId].splice(idx, 1);
-  saveHistorial(hist);
-  renderRetroLoaded();
-  renderModalHistorial(retroExId);
-  refreshRutinas();
-  showToast('Registro eliminado');
-}
-
-function cerrarRetro() {
-  document.getElementById('retro-overlay').classList.remove('show');
-  retroExId = null;
-}
-
-function retroOverlayClick(e) {
-  if (e.target === document.getElementById('retro-overlay')) cerrarRetro();
-}
-
-</script>
-
-<script>
-
-/* ═══════════════════════════════════════
-   DATA — Rutinas reales (de las fotos)
-═══════════════════════════════════════ */
-const RUTINAS = {
-  fullbody: {
-    label: 'FULL BODY',
-    ejercicios: [
-      { id:'fb1', nombre:'Peso muerto',                  series:3, reps:'4-8'   },
-      { id:'fb2', nombre:'Press inclinado con mancuerna',series:3, reps:'6-10'  },
-      { id:'fb3', nombre:'Estocada búlgara',              series:3, reps:'6-10'  },
-      { id:'fb4', nombre:'Remo sentado agarre neutro',   series:3, reps:'8-12'  },
-      { id:'fb5', nombre:'Convergente de hombro',        series:3, reps:'8-12'  },
-      { id:'fb6', nombre:'Banco de cuádriceps',           series:4, reps:'10-15' },
-    ]
-  },
-  torso: {
-    label: 'TORSO',
-    ejercicios: [
-      { id:'to1', nombre:'Banco plano',              series:4, reps:'4-8'   },
-      { id:'to2', nombre:'Polea alta por delante',   series:3, reps:'8-12'  },
-      { id:'to3', nombre:'Press militar',             series:3, reps:'4-8'   },
-      { id:'to4', nombre:'Remo T en máquina',        series:3, reps:'8-12'  },
-      { id:'to5', nombre:'Vuelos laterales',         series:3, reps:'10-20' },
-      { id:'to6', nombre:'Bíceps en polea',          series:3, reps:'10-15' },
-      { id:'to7', nombre:'Tríceps en polea',         series:3, reps:'10-15' },
-    ]
-  },
-  pierna: {
-    label: 'PIERNA',
-    ejercicios: [
-      { id:'pi1', nombre:'Sentadilla ciclista',  series:3, reps:'8-12'  },
-      { id:'pi2', nombre:'Peso muerto rumano',   series:3, reps:'6-10'  },
-      { id:'pi3', nombre:'Hip thrust',           series:3, reps:'8-12'  },
-      { id:'pi4', nombre:'Prensa 45',            series:3, reps:'8-12'  },
-      { id:'pi5', nombre:'Subidas al cajón',     series:3, reps:'8-12'  },
-      { id:'pi6', nombre:'Gemelos en polea',     series:3, reps:'10-15' },
-    ]
-  }
-};
-
-
-/* ═══════════════════════════════════════
-   IMÁGENES DE EJERCICIOS
-   Fuente: yuhonas/free-exercise-db (dominio público)
-═══════════════════════════════════════ */
-const BASE_IMG = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
-const EX_IMAGES = {
-  'fb1': BASE_IMG + 'Barbell_Deadlift/0.jpg',
-  'fb2': BASE_IMG + 'Dumbbell_Incline_Bench_Press/0.jpg',
-  'fb3': BASE_IMG + 'Dumbbell_Bulgarian_Split_Squat/0.jpg',
-  'fb4': BASE_IMG + 'Seated_Cable_Row/0.jpg',
-  'fb5': BASE_IMG + 'Cable_Shoulder_Press/0.jpg',
-  'fb6': BASE_IMG + 'Leg_Extensions/0.jpg',
-  'to1': BASE_IMG + 'Barbell_Bench_Press_-_Medium_Grip/0.jpg',
-  'to2': BASE_IMG + 'Wide-Grip_Lat_Pulldown/0.jpg',
-  'to3': BASE_IMG + 'Barbell_Shoulder_Press/0.jpg',
-  'to4': BASE_IMG + 'T-Bar_Row_with_Handle/0.jpg',
-  'to5': BASE_IMG + 'Side_Lateral_Raise/0.jpg',
-  'to6': BASE_IMG + 'Low_Cable_Curl/0.jpg',
-  'to7': BASE_IMG + 'Pushdown/0.jpg',
-  'pi1': BASE_IMG + 'Hack_Squat/0.jpg',
-  'pi2': BASE_IMG + 'Romanian_Deadlift/0.jpg',
-  'pi3': BASE_IMG + 'Barbell_Hip_Thrust/0.jpg',
-  'pi4': BASE_IMG + 'Leg_Press/0.jpg',
-  'pi5': BASE_IMG + 'Barbell_Step_Ups/0.jpg',
-  'pi6': BASE_IMG + 'Standing_Calf_Raises/0.jpg',
-};
-
-function onImgLoad() {
-  document.getElementById('modal-img-skeleton').style.display = 'none';
-  document.getElementById('modal-ex-img').style.display = 'block';
-}
-function onImgError() {
-  document.getElementById('modal-img-wrap').style.display = 'none';
-}
-
-// Plan semanal: qué grupo corresponde a cada día
-const PLAN_SEMANAL = {
-  0: null,          // Dom - descanso
-  1: 'fullbody',    // Lun
-  2: 'torso',       // Mar
-  3: 'pierna',      // Mié
-  4: 'fullbody',    // Jue
-  5: 'torso',       // Vie
-  6: null           // Sáb - descanso
-};
-
-/* ═══════════════════════════════════════
-   STORAGE — GitHub JSON + localStorage cache
-═══════════════════════════════════════ */
-const GH_USER  = 'jotracks';
-const GH_REPO  = 'INGUZ';
-const GH_FILE  = 'data.json';
-const GH_TOKEN_KEY = 'inguz_gh_token';
-let GH_TOKEN = localStorage.getItem(GH_TOKEN_KEY) || '';
-const GH_API   = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
-const APP_SESSION_KEY = 'inguz_logged_in';
-const DEFAULT_LOGIN_USER = 'admin';
-const DEFAULT_LOGIN_PASS = '123456';
-const DEFAULT_GH_TOKEN = ''; // opcional: pegá tu token acá si querés autologin con sync
-
-let ghSha = null;        // SHA del archivo en GitHub (necesario para actualizarlo)
-let syncPending = false; // evita commits simultáneos
-let syncTimer   = null;  // debounce
-
-// ── Leer datos (primero local, luego sincroniza con GitHub) ──
-function getDefaultData() {
-  return {
-    perfil: {
-      nombre:'', peso:'', altura:'', objetivo:'',
-      desde: new Date().toISOString().slice(0,10),
-      foto:'', loginUser: DEFAULT_LOGIN_USER, loginPass: DEFAULT_LOGIN_PASS, ghToken: DEFAULT_GH_TOKEN
-    },
-    historial: {}
-  };
-}
-
-function ensureDataShape(data) {
-  const base = getDefaultData();
-  const d = (data && typeof data === 'object') ? data : {};
-  d.perfil = Object.assign({}, base.perfil, d.perfil || {});
-  d.historial = (d.historial && typeof d.historial === 'object' && !Array.isArray(d.historial)) ? d.historial : {};
-  return d;
-}
-
-function getData() {
-  try {
-    return ensureDataShape(JSON.parse(localStorage.getItem('inguz_data') || '{}'));
-  } catch(e) {
-    return getDefaultData();
-  }
-}
-
-function saveData(data) {
-  const safe = ensureDataShape(data);
-  localStorage.setItem('inguz_data', JSON.stringify(safe));
-  if (!GH_TOKEN || GH_TOKEN === 'offline') return;
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => pushToGitHub(safe), 1500);
-}
-
-async function pushToGitHub(data) {
-  if (!GH_TOKEN || GH_TOKEN === 'offline' || syncPending) return;
-  syncPending = true;
-  try {
-    if (!ghSha) {
-      const res = await fetch(GH_API, {
-        headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        ghSha = json.sha;
-      } else if (res.status !== 404) {
-        throw new Error('No se pudo leer el archivo remoto');
-      }
-    }
-
-    const dataParaGH = JSON.parse(JSON.stringify(ensureDataShape(data)));
-    if (dataParaGH.perfil) dataParaGH.perfil.foto = '';
-
-    const body = {
-      message: `update ${new Date().toISOString().slice(0,10)}`,
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(dataParaGH, null, 2))))
-    };
-    if (ghSha) body.sha = ghSha;
-
-    const putRes = await fetch(GH_API, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${GH_TOKEN}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify(body)
-    });
-
-    if (putRes.ok) {
-      const putJson = await putRes.json();
-      ghSha = putJson.content.sha;
-      showSyncDot('ok');
-    } else {
-      console.error(await putRes.text());
-      showSyncDot('err');
-    }
-  } catch(e) {
-    console.error(e);
-    showSyncDot('err');
-  }
-  syncPending = false;
-}
-
-async function pullFromGitHub() {
-  if (!GH_TOKEN || GH_TOKEN === 'offline') return false;
-  try {
-    const res = await fetch(GH_API + '?t=' + Date.now(), {
-      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (res.status === 404) return false;
-    if (!res.ok) return false;
-
-    const json = await res.json();
-    ghSha = json.sha;
-    const decoded = decodeURIComponent(escape(atob((json.content || '').replace(/\n/g,''))));
-    const remoteData = ensureDataShape(JSON.parse(decoded || '{}'));
-
-    const localData = getData();
-    if (localData.perfil && localData.perfil.foto) remoteData.perfil.foto = localData.perfil.foto;
-    localStorage.setItem('inguz_data', JSON.stringify(remoteData));
-    showSyncDot('ok');
-    return true;
-  } catch(e) {
-    console.error(e);
-    return false;
-  }
-}
-
-function getAuthConfig() {
-  const d = getData();
-  return {
-    user: (d.perfil.loginUser || DEFAULT_LOGIN_USER).trim(),
-    pass: d.perfil.loginPass || DEFAULT_LOGIN_PASS,
-    token: (d.perfil.ghToken || DEFAULT_GH_TOKEN || '').trim()
-  };
-}
-
-function showSyncDotfunction showSyncDot(state) {
-  const dot = document.getElementById('sync-dot');
-  if (!dot) return;
-  dot.style.background = state === 'ok' ? 'var(--green)' : '#e05252';
-  dot.style.opacity = '1';
-  clearTimeout(dot._t);
-  dot._t = setTimeout(() => { dot.style.opacity = '0.3'; }, 2000);
-}
-
-function getPerfil() {
-  const d = getData();
-  return d.perfil || { nombre:'', peso:'', altura:'', objetivo:'', desde: new Date().toISOString().slice(0,10), foto:'' };
-}
-function getHistorial() {
-  const d = getData();
-  return d.historial || {};
-}
-function saveHistorial(h) {
-  const d = getData();
-  d.historial = h;
-  saveData(d);
-}
-function savePerfil(p) {
-  const d = getData();
-  d.perfil = p;
-  saveData(d);
-}
-
-/* ═══════════════════════════════════════
-   NAV / SCREENS
-═══════════════════════════════════════ */
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  window.scrollTo(0,0);
-
-  if (name === 'home')   updateHome();
-  if (name === 'perfil') updatePerfil();
-}
-
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
-}
-
-/* ═══════════════════════════════════════
-   HOME
-═══════════════════════════════════════ */
-function updateHome() {
-  // Header date
-  const now = new Date();
-  const mesesLargo = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const diasSemana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  const monthNum = document.getElementById('header-month-num');
-  const monthLbl = document.getElementById('header-month-label');
-  const dayNum   = document.getElementById('header-day-num');
-  const dayName  = document.getElementById('header-day-name');
-  if (monthNum) monthNum.textContent = String(now.getMonth()+1).padStart(2,'0');
-  if (monthLbl) monthLbl.textContent = mesesLargo[now.getMonth()].toUpperCase();
-  if (dayNum)   dayNum.textContent   = now.getDate();
-  if (dayName)  dayName.textContent  = diasSemana[now.getDay()];
-
-  const p = getPerfil();
-  const nombre = p.nombre || 'Atleta';
-  const iniciales = nombre.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-
-  // Saludo
-  const hora = new Date().getHours();
-  const saludo = hora < 12 ? 'BUENOS DÍAS' : hora < 20 ? 'BUENAS TARDES' : 'BUENAS NOCHES';
-  document.getElementById('hero-greeting').textContent = saludo + ', ' + nombre.split(' ')[0].toUpperCase();
-
-  // Avatar
-  const avatarEl = document.getElementById('home-avatar');
-  const avatarIn = document.getElementById('home-avatar-initials');
-  if (p.foto) {
-    avatarEl.innerHTML = `<img src="${p.foto}" alt="">`;
-  } else {
-    avatarEl.innerHTML = `<span>${iniciales || '?'}</span>`;
-  }
-
-  // Rutina de hoy
-  const dow = new Date().getDay();
-  const grupoId = PLAN_SEMANAL[dow];
-  const card = document.getElementById('rutina-hoy-card');
-  if (grupoId && RUTINAS[grupoId]) {
-    const g = RUTINAS[grupoId];
-    document.getElementById('rh-label').textContent = 'HOY ENTRENÁS';
-    document.getElementById('rh-nombre').textContent = g.label;
-    document.getElementById('rh-det').textContent = g.ejercicios.length + ' ejercicios · Tocá para ver';
-    card.className = 'rutina-hoy-card';
-    document.getElementById('hero-sub').textContent = 'Hoy toca ' + g.label.toLowerCase() + '. ¡A romperla!';
-  } else {
-    document.getElementById('rh-label').textContent = 'DESCANSO';
-    document.getElementById('rh-nombre').textContent = 'Día de recuperación';
-    document.getElementById('rh-det').textContent = 'Descansá y aprovechá para estirar';
-    card.className = 'rutina-hoy-card descanso';
-    document.getElementById('hero-sub').textContent = 'Hoy es día de descanso. El cuerpo también trabaja descansando.';
-    card.onclick = null;
-  }
-
-  // Stats
-  const hist = getHistorial();
-  let totalSesiones = 0, totalEjercicios = 0;
-  const fechas = new Set();
-  Object.values(hist).forEach(registros => {
-    registros.forEach(r => fechas.add(r.fecha));
-    totalEjercicios += registros.length;
-  });
-  totalSesiones = fechas.size;
-
-  // Racha (días consecutivos con al menos 1 registro)
-  let racha = 0;
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  for (let i = 0; i < 30; i++) {
-    const d = new Date(hoy); d.setDate(d.getDate() - i);
-    const iso = d.toISOString().slice(0,10);
-    const tuvoEntreno = Object.values(hist).some(rs => rs.some(r => r.fecha === iso));
-    if (tuvoEntreno) racha++;
-    else if (i > 0) break;
-  }
-
-  document.getElementById('stat-sesiones').textContent = totalSesiones;
-  document.getElementById('stat-ejercicios').textContent = totalEjercicios;
-  document.getElementById('stat-racha').textContent = racha;
-
-  // Últimos entrenamientos
-  renderHistHome(hist);
-}
-
-function renderHistHome(hist) {
-  const wrap = document.getElementById('home-hist-list');
-
-  // Agrupar por fecha
-  const porFecha = {};
-  Object.entries(hist).forEach(([exId, registros]) => {
-    registros.forEach(r => {
-      if (!porFecha[r.fecha]) porFecha[r.fecha] = { grupos: new Set(), total:0 };
-      porFecha[r.fecha].total++;
-      // Buscar grupo al que pertenece
-      Object.entries(RUTINAS).forEach(([gId, g]) => {
-        if (g.ejercicios.find(e => e.id === exId)) porFecha[r.fecha].grupos.add(g.label);
-      });
-    });
-  });
-
-  const fechasOrdenadas = Object.keys(porFecha).sort((a,b) => b.localeCompare(a)).slice(0,5);
-  if (fechasOrdenadas.length === 0) {
-    wrap.innerHTML = `<div style="padding:4px 4px 12px;font-size:12px;color:var(--muted2);">Todavía no hay entrenamientos registrados.</div>`;
-    return;
-  }
-
-  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  wrap.innerHTML = fechasOrdenadas.map(fecha => {
-    const [y,m,d] = fecha.split('-');
-    const data = porFecha[fecha];
-    const grupos = [...data.grupos].join(' + ') || '—';
-    return `
-    <div class="hist-card">
-      <div class="hist-date-col">
-        <div class="hist-day">${parseInt(d)}</div>
-        <div class="hist-mon">${meses[parseInt(m)-1]}</div>
-      </div>
-      <div class="hist-info">
-        <div class="hist-name">${grupos}</div>
-        <div class="hist-exs">${data.total} serie${data.total !== 1 ? 's' : ''} registrada${data.total !== 1 ? 's' : ''}</div>
-      </div>
-      <div class="hist-badge">${data.total} series</div>
-    </div>`;
-  }).join('');
-}
-
-/* ═══════════════════════════════════════
-   RUTINAS — BUILD
-═══════════════════════════════════════ */
-function buildRutinas() {
-  const hoy = new Date().toISOString().slice(0,10);
-  Object.entries(RUTINAS).forEach(([grupoId, grupo]) => {
-    const body = document.getElementById('body-' + grupoId);
-    if (!body) return;
-    const hist = getHistorial();
-
-    body.innerHTML = grupo.ejercicios.map((ex, i) => {
-      const registros = hist[ex.id] || [];
-      const ultimo = registros.length > 0 ? registros[registros.length-1] : null;
-      const lastTxt = ultimo
-        ? `${ultimo.series}×${ultimo.reps} · ${ultimo.peso}kg`
-        : '';
-      const doneHoy = registros.some(r => r.fecha === hoy);
-      const doneClass = doneHoy ? 'completado-hoy' : '';
-      return `
-      <div class="ex-row ${doneClass}" id="exrow-${ex.id}" onclick="abrirModal('${ex.id}')">
-        <div class="ex-num">${i+1}</div>
-        <div class="ex-info">
-          <div class="ex-name-r">${ex.nombre}</div>
-          <div class="ex-prescr">
-            <span>Series: <strong style="color:var(--text)">${ex.series}</strong></span>
-            <span>Reps: <strong style="color:var(--text)">${ex.reps}</strong></span>
-          </div>
-        </div>
-        <div class="ex-registro">
-          ${doneHoy ? `<div class="ex-done-badge">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            HECHO
-          </div>` : ''}
-          ${lastTxt ? `<div class="ex-last">${lastTxt}</div>` : ''}
-          <div class="ex-edit-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="#777"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="#777"/>
-            </svg>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  });
-}
-
-function refreshRutinas() {
-  buildRutinas();
-}
-
-/* ═══════════════════════════════════════
-   GRUPO TOGGLE
-═══════════════════════════════════════ */
-function toggleGrupo(id) {
-  const body  = document.getElementById('body-' + id);
-  const arrow = document.getElementById('arrow-' + id);
-  const header = body.previousElementSibling;
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  arrow.classList.toggle('open', !isOpen);
-  header.classList.toggle('open', !isOpen);
-}
-
-/* ═══════════════════════════════════════
-   TABS RUTINAS
-═══════════════════════════════════════ */
-function switchRTab(tab, id) {
-  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-
-  ['fullbody','torso','pierna'].forEach(g => {
-    const wrap = document.getElementById('grupo-' + g + '-wrap');
-    if (!wrap) return;
-    if (id === 'all' || id === g) {
-      wrap.style.display = 'block';
-    } else {
-      wrap.style.display = 'none';
-    }
-  });
-
-  // Auto-abrir el grupo si solo hay uno visible
-  if (id !== 'all') {
-    const body = document.getElementById('body-' + id);
-    const arrow = document.getElementById('arrow-' + id);
-    const header = body ? body.previousElementSibling : null;
-    if (body && !body.classList.contains('open')) {
-      body.classList.add('open');
-      if (arrow) arrow.classList.add('open');
-      if (header) header.classList.add('open');
-    }
-  }
-}
-
-/* ═══════════════════════════════════════
-   MODAL REGISTRO
-═══════════════════════════════════════ */
-let modalExId = null;
-
-function abrirModal(exId) {
-  modalExId = exId;
-
-  // Encontrar el ejercicio
-  let ex = null;
-  Object.values(RUTINAS).forEach(g => {
-    const found = g.ejercicios.find(e => e.id === exId);
-    if (found) ex = found;
-  });
-  if (!ex) return;
-
-  document.getElementById('modal-ex-name').textContent = ex.nombre;
-
-  // Imagen de referencia
-  const imgWrap = document.getElementById('modal-img-wrap');
-  const imgEl   = document.getElementById('modal-ex-img');
-  const skelEl  = document.getElementById('modal-img-skeleton');
-  imgWrap.style.display = 'block';
-  imgEl.style.display   = 'none';
-  skelEl.style.display  = 'block';
-  imgEl.src = EX_IMAGES[exId] || '';
-  if (!EX_IMAGES[exId]) { imgWrap.style.display = 'none'; }
-  document.getElementById('modal-prescr').innerHTML =
-    `<strong>Series:</strong> ${ex.series} &nbsp;·&nbsp; <strong>Reps:</strong> ${ex.reps}`;
-
-  // Pre-seleccionar último valor usado (o default)
-  const hist = getHistorial();
-  const regs = hist[exId] || [];
-  const ultimo = regs.length > 0 ? regs[regs.length-1] : null;
-
-  const sSel = document.getElementById('m-series');
-  const rSel = document.getElementById('m-reps');
-  const pSel = document.getElementById('m-peso');
-
-  sSel.value = ultimo ? ultimo.series : (ex.series || '');
-  rSel.value = ultimo ? ultimo.reps   : '';
-  pSel.value = ultimo ? ultimo.peso   : '';
-  document.getElementById('m-comment').value = '';
-
-  // Marcar en verde los que ya tienen valor
-  [sSel, rSel, pSel].forEach(s => {
-    s.classList.toggle('selected', !!s.value);
-  });
-
-  // Historial
-  renderModalHistorial(exId);
-
-  document.getElementById('modal-overlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-
-function renderModalHistorial(exId) {
-  const hist = getHistorial();
-  const registros = (hist[exId] || []).slice().reverse().slice(0, 8);
-  const wrap = document.getElementById('modal-hist-list');
-
-  if (registros.length === 0) {
-    wrap.innerHTML = `<div class="mhist-empty">Sin registros anteriores</div>`;
-    return;
-  }
-
-  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  wrap.innerHTML = registros.map(r => {
-    const [y,m,d] = r.fecha.split('-');
-    const fechaLabel = `${parseInt(d)} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][parseInt(m)-1]} de ${y}`;
-    return `
-    <div class="mhist-row">
-      <div class="mhist-date">${fechaLabel}</div>
-      <div class="mhist-vals">
-        <span>${r.series}</span> series ·
-        <span>${r.reps}</span> reps ·
-        <span>${r.peso}</span> kg
-      </div>
-      ${r.comentario ? `<div class="mhist-note">${r.comentario}</div>` : ''}
-    </div>`;
-  }).join('');
-}
-
-function onModalSelChange(sel) {
-  sel.classList.toggle('selected', !!sel.value);
-}
-
-function guardarRegistro() {
-  const series = document.getElementById('m-series').value;
-  const reps   = document.getElementById('m-reps').value;
-  const peso   = document.getElementById('m-peso').value;
-  const comentario = document.getElementById('m-comment').value.trim();
-
-  if (!series || !reps || !peso) {
-    showToast('Elegí series, reps y peso');
-    return;
-  }
-
-  const hist = getHistorial();
-  if (!hist[modalExId]) hist[modalExId] = [];
-  hist[modalExId].push({
-    fecha: new Date().toISOString().slice(0,10),
-    series, reps, peso, comentario
-  });
-  saveHistorial(hist);
-
-  // Marcar el ejercicio como completado hoy visualmente
-  const exRow = document.getElementById('exrow-' + modalExId);
-  if (exRow) exRow.classList.add('completado-hoy');
-
-  cerrarModalForzado();
-  showToast('Registro guardado');
-  refreshRutinas();
-}
-
-function cerrarModal(e) {
-  if (e.target === document.getElementById('modal-overlay')) cerrarModalForzado();
-}
-function cerrarModalForzado() {
-  document.getElementById('modal-overlay').classList.remove('show');
-  document.body.style.overflow = '';
-  modalExId = null;
-}
-
-/* ═══════════════════════════════════════
-   PERFIL
-═══════════════════════════════════════ */
-function updatePerfil() {
-  const p = getPerfil();
-  const nombre = p.nombre || '';
-  const iniciales = nombre.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '?';
-
-  document.getElementById('ph-initials').textContent = iniciales;
-  document.getElementById('ph-name-display').textContent = nombre || 'Tu nombre';
-  document.getElementById('ph-objetivo-display').textContent = p.objetivo || '— objetivo —';
-
-  const desde = p.desde ? new Date(p.desde).toLocaleDateString('es-AR', {month:'long', year:'numeric'}) : '—';
-  document.getElementById('ph-desde-display').textContent = 'Miembro desde ' + desde;
-
-  document.getElementById('ph-stat-peso').textContent = p.peso || '—';
-  document.getElementById('ph-stat-altura').textContent = p.altura || '—';
-
-  // Stats sesiones
-  const hist = getHistorial();
-  const fechas = new Set();
-  Object.values(hist).forEach(rs => rs.forEach(r => fechas.add(r.fecha)));
-  document.getElementById('ph-stat-sesiones2').textContent = fechas.size;
-
-  // Foto
-  const photoCircle = document.getElementById('ph-photo-circle');
-  if (photoCircle && p.foto) {
-    photoCircle.style.backgroundImage = `url(${p.foto})`;
-    photoCircle.style.backgroundSize = 'cover';
-    photoCircle.style.backgroundPosition = 'center';
-    document.getElementById('ph-initials').style.display = 'none';
-  } else if (photoCircle) {
-    photoCircle.style.backgroundImage = '';
-    document.getElementById('ph-initials').style.display = '';
-  }
-  // Also update home avatar
-  const homeAvEl = document.getElementById('home-avatar');
-  if (homeAvEl && p.foto) {
-    homeAvEl.innerHTML = `<img src="${p.foto}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-  }
-
-  // Llenar form
-  document.getElementById('pf-nombre').value  = p.nombre  || '';
-  document.getElementById('pf-peso').value    = p.peso    || '';
-  document.getElementById('pf-altura').value  = p.altura  || '';
-  document.getElementById('pf-objetivo').value = p.objetivo || '';
-  document.getElementById('pf-login-user').value = p.loginUser || DEFAULT_LOGIN_USER;
-  document.getElementById('pf-login-pass').value = p.loginPass || DEFAULT_LOGIN_PASS;
-  document.getElementById('pf-gh-token').value = p.ghToken || DEFAULT_GH_TOKEN;
-}
-
-function guardarPerfil() {
-  const p = getPerfil();
-  p.nombre   = document.getElementById('pf-nombre').value.trim();
-  p.peso     = document.getElementById('pf-peso').value;
-  p.altura   = document.getElementById('pf-altura').value;
-  p.objetivo = document.getElementById('pf-objetivo').value;
-  p.loginUser = document.getElementById('pf-login-user').value.trim() || DEFAULT_LOGIN_USER;
-  p.loginPass = document.getElementById('pf-login-pass').value || DEFAULT_LOGIN_PASS;
-  p.ghToken   = document.getElementById('pf-gh-token').value.trim();
-  if (!p.desde) p.desde = new Date().toISOString().slice(0,10);
-  savePerfil(p);
-
-  if (localStorage.getItem(APP_SESSION_KEY) === '1') {
-    GH_TOKEN = p.ghToken || '';
-    if (GH_TOKEN) localStorage.setItem(GH_TOKEN_KEY, GH_TOKEN);
-    else localStorage.removeItem(GH_TOKEN_KEY);
-  }
-
-  updatePerfil();
-  updateHome();
-  showToast('Perfil guardado');
-}
-
-// ═══════════════════════════════════════
-// FOTO + CROP
-// ═══════════════════════════════════════
-let cropState = { imgSrc:'', x:0, y:0, zoom:1, dragging:false, startX:0, startY:0, lastX:0, lastY:0 };
-
-document.getElementById('photo-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    cropState.imgSrc = ev.target.result;
-    cropState.x = 0; cropState.y = 0; cropState.zoom = 1;
-    const img = document.getElementById('crop-img');
-    img.onload = function() {
-      // Auto-fit: scale so image fills the 220px circle
-      const ratio = Math.max(220 / img.naturalWidth, 220 / img.naturalHeight);
-      cropState.zoom = ratio;
-      document.getElementById('crop-zoom').value = ratio;
-      document.getElementById('crop-zoom').min = ratio * 0.5;
-      placeCropImg();
-    };
-    img.src = ev.target.result;
-    const overlay = document.getElementById('crop-overlay');
-    overlay.style.display = 'flex';
-  };
-  reader.readAsDataURL(file);
-  this.value = '';
-});
-
-function placeCropImg() {
-  const img = document.getElementById('crop-img');
-  const circle = document.getElementById('crop-circle');
-  const cw = circle.offsetWidth || 220;
-  const ch = circle.offsetHeight || 220;
-  const iw = img.naturalWidth  * cropState.zoom;
-  const ih = img.naturalHeight * cropState.zoom;
-  // Clamp so image always covers the circle
-  const minX = Math.min(0, cw - iw);
-  const minY = Math.min(0, ch - ih);
-  cropState.x = Math.max(minX, Math.min(0, cropState.x));
-  cropState.y = Math.max(minY, Math.min(0, cropState.y));
-  img.style.width  = iw + 'px';
-  img.style.height = ih + 'px';
-  img.style.left   = cropState.x + 'px';
-  img.style.top    = cropState.y + 'px';
-}
-
-function updateCropZoom() {
-  cropState.zoom = parseFloat(document.getElementById('crop-zoom').value);
-  placeCropImg();
-}
-
-// Touch / mouse drag on crop circle
-(function() {
-  const circle = document.getElementById('crop-circle');
-  function onStart(e) {
-    cropState.dragging = true;
-    const pt = e.touches ? e.touches[0] : e;
-    cropState.startX = pt.clientX - cropState.x;
-    cropState.startY = pt.clientY - cropState.y;
-  }
-  function onMove(e) {
-    if (!cropState.dragging) return;
-    e.preventDefault();
-    const pt = e.touches ? e.touches[0] : e;
-    cropState.x = pt.clientX - cropState.startX;
-    cropState.y = pt.clientY - cropState.startY;
-    placeCropImg();
-  }
-  function onEnd() { cropState.dragging = false; }
-  circle.addEventListener('mousedown',  onStart);
-  circle.addEventListener('touchstart', onStart, {passive:true});
-  window.addEventListener('mousemove',  onMove);
-  window.addEventListener('touchmove',  onMove, {passive:false});
-  window.addEventListener('mouseup',    onEnd);
-  window.addEventListener('touchend',   onEnd);
-})();
-
-function cancelCrop() {
-  document.getElementById('crop-overlay').style.display = 'none';
-}
-
-function applyCrop() {
-  const img    = document.getElementById('crop-img');
-  const circle = document.getElementById('crop-circle');
-  const size   = circle.offsetWidth || 220;
-  // Draw cropped circle to canvas
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  ctx.beginPath();
-  ctx.arc(size/2, size/2, size/2, 0, Math.PI*2);
-  ctx.closePath(); ctx.clip();
-  const iw = img.naturalWidth  * cropState.zoom;
-  const ih = img.naturalHeight * cropState.zoom;
-  ctx.drawImage(img, cropState.x, cropState.y, iw, ih);
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
-  const p = getPerfil();
-  p.foto = dataUrl;
-  savePerfil(p);
-  updatePerfil();
-  document.getElementById('crop-overlay').style.display = 'none';
-  showToast('Foto actualizada');
-}
-
-function resetApp() {
-  if (confirm('¿Seguro? Se van a borrar todos tus datos y el historial.')) {
-    localStorage.removeItem('inguz_data');
-    localStorage.removeItem('inguz_gh_token');
-    localStorage.removeItem(APP_SESSION_KEY);
-    location.reload();
-  }
-}
-
-/* ═══════════════════════════════════════
-   INIT
-═══════════════════════════════════════ */
-
-/* ═══════════════════════════════════════
-   LOGIN + SETUP
-═══════════════════════════════════════ */
-function loginApp() {
-  const userEl = document.getElementById('setup-user-inp');
-  const passEl = document.getElementById('setup-pass-inp');
-  const errEl = document.getElementById('setup-err');
-  errEl.style.display = 'none';
-
-  const cfg = getAuthConfig();
-  const user = userEl.value.trim();
-  const pass = passEl.value;
-
-  if (user !== cfg.user || pass !== cfg.pass) {
-    errEl.textContent = 'Usuario o contraseña incorrectos';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  localStorage.setItem(APP_SESSION_KEY, '1');
-  GH_TOKEN = cfg.token || '';
-  if (GH_TOKEN) localStorage.setItem(GH_TOKEN_KEY, GH_TOKEN);
-  else localStorage.removeItem(GH_TOKEN_KEY);
-
-  iniciarApp();
-}
-
-function entrarSinGitHub() {
-  localStorage.setItem(APP_SESSION_KEY, '1');
-  GH_TOKEN = '';
-  localStorage.removeItem(GH_TOKEN_KEY);
-  iniciarApp();
-}
-
-function mostrarSetup() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-setup').classList.add('active');
-  const userEl = document.getElementById('setup-user-inp');
-  const cfg = getAuthConfig();
-  if (userEl) userEl.value = cfg.user || DEFAULT_LOGIN_USER;
-  const passEl = document.getElementById('setup-pass-inp');
-  if (passEl) passEl.value = '';
 }
 
 function ocultarSetup() {
@@ -3704,7 +2568,6 @@ async function iniciarApp() {
   updatePerfil();
   showScreen('home');
   updateHome();
-
   if (GH_TOKEN && GH_TOKEN !== 'offline') {
     const pulled = await pullFromGitHub();
     if (pulled) {
@@ -3719,20 +2582,17 @@ async function iniciarApp() {
 document.addEventListener('DOMContentLoaded', async () => {
   const safe = getData();
   localStorage.setItem('inguz_data', JSON.stringify(safe));
-  const logged = localStorage.getItem(APP_SESSION_KEY) === '1';
-  if (!logged) {
+  const savedToken = localStorage.getItem(GH_TOKEN_KEY);
+  if (!savedToken) {
     mostrarSetup();
   } else {
-    const cfg = getAuthConfig();
-    GH_TOKEN = cfg.token || '';
-    if (GH_TOKEN) localStorage.setItem(GH_TOKEN_KEY, GH_TOKEN);
-    else localStorage.removeItem(GH_TOKEN_KEY);
+    GH_TOKEN = savedToken;
     await iniciarApp();
   }
 });
 
+
 /* ═══════════════════════════════════════
-   TIMER DE DESCANSO/* ═══════════════════════════════════════
    TIMER DE DESCANSO
 ═══════════════════════════════════════ */
 let timerTotal    = 60;
@@ -3974,7 +2834,6 @@ function cerrarRetro() {
 function retroOverlayClick(e) {
   if (e.target === document.getElementById('retro-overlay')) cerrarRetro();
 }
-
 
 </script>
 </body>

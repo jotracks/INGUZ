@@ -625,9 +625,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     <div class="section-title">Categorías</div>
     <div class="tabs">
       <button class="tab active" onclick="switchTab(this,'all')">Todas</button>
-      <button class="tab" onclick="switchTab(this,'fullbody')">Full Body</button>
-      <button class="tab" onclick="switchTab(this,'torso')">Torso</button>
-      <button class="tab" onclick="switchTab(this,'pierna')">Pierna</button>
+      <button class="tab" onclick="switchTab(this,'dia1')">Sesión 1</button>
+      <button class="tab" onclick="switchTab(this,'dia2')">Sesión 2</button>
+      <button class="tab" onclick="switchTab(this,'dia3')">Sesión 3</button>
+      <button class="tab" onclick="switchTab(this,'dia4')">Sesión 4</button>
     </div>
     <div style="height:14px"></div>
     <div id="groups-wrap"></div>
@@ -854,60 +855,68 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     const AUTH_KEY = 'inguz_auth_ok';
     const LOCAL_DATA_KEY = 'inguz_data';
 
-    const PLAN_SEMANAL = {
-      0: null,
-      1: 'fullbody',
-      2: null,
-      3: 'torso',
-      4: null,
-      5: 'pierna',
-      6: null
-    };
+    const RUTINA_ORDEN = ['dia1', 'dia2', 'dia3', 'dia4'];
 
     const RUTINAS = {
-      fullbody: {
-        nombre: 'FULL BODY',
+      dia1: {
+        nombre: 'SESIÓN 1',
+        color: 'pierna',
         ejercicios: [
-          { id: 'fb1', nombre: 'Peso Muerto', series: 3, reps: '4-8' },
-          { id: 'fb2', nombre: 'Press inclinado con mancuernas', series: 3, reps: '6-10' },
-          { id: 'fb3', nombre: 'Estocada Bulgara', series: 3, reps: '6-10' },
-          { id: 'fb4', nombre: 'Remo sentado agarre NEUTRO', series: 3, reps: '8-12' },
-          { id: 'fb5', nombre: 'Convergente de Hombroo', series: 3, reps: '8-12' },
-          { id: 'fb6', nombre: 'Banco Cruadiceps', series: 4, reps: '10-15' }
-        ]
-      },
-      torso: {
-        nombre: 'TORSO',
-        ejercicios: [
-          { id: 'to1', nombre: 'Banco Plano', series: 4, reps: '4-8' },
-          { id: 'to2', nombre: 'Polea Alta por delante', series: 3, reps: '8-12' },
-          { id: 'to3', nombre: 'Press Militar', series: 3, reps: '4-8' },
-          { id: 'to4', nombre: 'Remo T En maquina', series: 3, reps: '8-12' },
-          { id: 'to5', nombre: 'Vuelos laterales', series: 3, reps: '10-20' },
-          { id: 'to6', nombre: 'bíceps polea', series: 3, reps: '10-15' },
-          { id: 'to7', nombre: 'Tríceps polea', series: 3, reps: '10-15' }
-        ]
-      },
-      pierna: {
-        nombre: 'PIERNA',
-        ejercicios: [
-          { id: 'pi1', nombre: 'Sentadilla Ciclista', series: 3, reps: '8-12' },
-          { id: 'pi2', nombre: 'Peso muerto rumano', series: 3, reps: '8-10' },
-          { id: 'pi3', nombre: 'Hip thrust', series: 3, reps: '8-12' },
-          { id: 'pi4', nombre: 'Prensa 45', series: 3, reps: '8-12' },
-          { id: 'pi5', nombre: 'Step ups', series: 3, reps: '8-12' },
+          { id: 'pi1_barra', nombre: 'Sentadilla con barra', series: 3, reps: '4-8' },
+          { id: 'pi2', nombre: 'Peso muerto rumano con barra', series: 3, reps: '6-8' },
+          { id: 'pi4', nombre: 'Prensa 45', series: 4, reps: '8-12' },
+          { id: 'pi3', nombre: 'Hip Thrust', series: 4, reps: '8-12' },
+          { id: 'fb6', nombre: 'Banco de cuádriceps', series: 3, reps: '10-15' },
           { id: 'pi6', nombre: 'Gemelos en polea', series: 3, reps: '10-15' }
+        ]
+      },
+      dia2: {
+        nombre: 'SESIÓN 2',
+        color: 'torso',
+        ejercicios: [
+          { id: 'to1', nombre: 'Banco plano', series: 3, reps: '3-6' },
+          { id: 'to2', nombre: 'Polea alta por delante', series: 3, reps: '8-12' },
+          { id: 'fb2', nombre: 'Press inclinado con mancuerna', series: 4, reps: '8-12' },
+          { id: 'd2_remo_barra', nombre: 'Remo con barra', series: 3, reps: '8-12' },
+          { id: 'd2_cruce_altas', nombre: 'Cruce de poleas altas', series: 3, reps: '8-12' },
+          { id: 'd2_face_pull', nombre: 'Face Pull', series: 3, reps: '8-12' }
+        ]
+      },
+      dia3: {
+        nombre: 'SESIÓN 3',
+        color: 'pierna',
+        ejercicios: [
+          { id: 'fb1', nombre: 'Peso muerto', series: 3, reps: '4-8' },
+          { id: 'd3_sentadilla_frontal', nombre: 'Sentadilla frontal', series: 3, reps: '6-8' },
+          { id: 'd3_prensa_hack', nombre: 'Prensa Hack', series: 3, reps: '6-10' },
+          { id: 'd3_hip_unilateral', nombre: 'Hip Thrust unilateral con mancuerna', series: 3, reps: '8-12' },
+          { id: 'd3_camilla_isquios', nombre: 'Camilla de isquiotibiales', series: 3, reps: '10-15' },
+          { id: 'd3_gemelos_unilateral', nombre: 'Gemelos unilateral', series: 3, reps: '10-15' }
+        ]
+      },
+      dia4: {
+        nombre: 'SESIÓN 4',
+        color: 'torso',
+        ejercicios: [
+          { id: 'to2', nombre: 'Polea alta por delante', series: 4, reps: '3-6' },
+          { id: 'fb2', nombre: 'Press inclinado', series: 3, reps: '8-12' },
+          { id: 'd4_pecho_hammer', nombre: 'Pecho Hammer', series: 3, reps: '8-12' },
+          { id: 'fb4', nombre: 'Remo sentado agarre neutro', series: 3, reps: '8-12' },
+          { id: 'd4_cruce_bajas', nombre: 'Cruce de poleas bajas', series: 3, reps: '10-15' },
+          { id: 'd4_remo_seal', nombre: 'Remo Seal', series: 3, reps: '8-12' }
         ]
       }
     };
 
     let APP = {
       perfil: {},
-      historial: {}
+      historial: {},
+      ultimaRutina: null
     };
 
     let currentTab = 'all';
     let currentExerciseId = null;
+    let currentGroupId = null;
     let timerTotal = 120;
     let timerRemaining = 120;
     let timerInterval = null;
@@ -922,7 +931,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           desde: new Date().toISOString().slice(0, 10),
           foto: ''
         },
-        historial: {}
+        historial: {},
+        ultimaRutina: null
       };
     }
 
@@ -930,7 +940,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const base = getDefaultData();
       const merged = {
         perfil: { ...base.perfil, ...(data?.perfil || {}) },
-        historial: typeof data?.historial === 'object' && data?.historial ? data.historial : {}
+        historial: typeof data?.historial === 'object' && data?.historial ? data.historial : {},
+        ultimaRutina: RUTINA_ORDEN.includes(data?.ultimaRutina) ? data.ultimaRutina : null
       };
       return merged;
     }
@@ -997,6 +1008,36 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       return APP.historial;
     }
 
+    function getNextRoutineKey() {
+      const lastKey = APP.ultimaRutina || null;
+      if (!lastKey || !RUTINA_ORDEN.includes(lastKey)) return RUTINA_ORDEN[0];
+      const index = RUTINA_ORDEN.indexOf(lastKey);
+      return RUTINA_ORDEN[(index + 1) % RUTINA_ORDEN.length];
+    }
+
+    function getRoutineKeyByExercise(exId, preferredGid = null) {
+      if (preferredGid && RUTINAS[preferredGid]?.ejercicios.some(e => e.id === exId)) return preferredGid;
+      return Object.keys(RUTINAS).find(gid => RUTINAS[gid].ejercicios.some(e => e.id === exId)) || null;
+    }
+
+    function markRoutineCompletedIfReady(gid, dateStr) {
+      const grupo = RUTINAS[gid];
+      if (!grupo) return false;
+      const day = dateStr.slice(0, 10);
+      const completed = grupo.ejercicios.every(ex =>
+        (APP.historial[ex.id] || []).some(reg => reg.fecha.slice(0, 10) === day)
+      );
+      if (completed) {
+        APP.ultimaRutina = gid;
+        return true;
+      }
+      return false;
+    }
+
+    function routineColor(gid) {
+      return RUTINAS[gid]?.color || 'fullbody';
+    }
+
     function exerciseById(exId) {
       for (const grupo of Object.values(RUTINAS)) {
         const ex = grupo.ejercicios.find(e => e.id === exId);
@@ -1037,28 +1078,20 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       document.getElementById('hero-greeting').textContent = `HOLA ${nombre.split(' ')[0].toUpperCase()}`;
       document.getElementById('hero-sub').textContent = perfil.objetivo ? `Objetivo: ${perfil.objetivo}` : 'Tu plan está listo para cargar.';
 
-      const todayGroupId = PLAN_SEMANAL[new Date().getDay()];
-      if (!todayGroupId) {
-        document.getElementById('today-label').textContent = 'DESCANSO';
-        document.getElementById('today-name').textContent = 'RECUPERACIÓN';
-        document.getElementById('today-sub').textContent = 'Hoy toca bajar revoluciones.';
-      } else {
-        const grupo = RUTINAS[todayGroupId];
-        document.getElementById('today-label').textContent = 'HOY ENTRENÁS';
-        document.getElementById('today-name').textContent = grupo.nombre;
-        document.getElementById('today-sub').textContent = `${grupo.ejercicios.length} ejercicios para completar.`;
-      }
+      const todayGroupId = getNextRoutineKey();
+      const grupo = RUTINAS[todayGroupId];
+      document.getElementById('today-label').textContent = 'PRÓXIMA SESIÓN';
+      document.getElementById('today-name').textContent = grupo.nombre;
+      document.getElementById('today-sub').textContent = `${grupo.ejercicios.length} ejercicios para completar.`;
 
       document.getElementById('stat-sesiones').textContent = sessionsCount();
       document.getElementById('stat-ejercicios').textContent = uniqueExercisesCount();
       document.getElementById('stat-racha').textContent = streakCount();
 
-      // Session progress bar
-      const todayGid2 = PLAN_SEMANAL[new Date().getDay()];
       const progEl = document.getElementById('session-progress');
-      if (todayGid2 && RUTINAS[todayGid2]) {
-        const tot2  = RUTINAS[todayGid2].ejercicios.length;
-        const don2  = groupDoneCount(todayGid2);
+      if (todayGroupId && RUTINAS[todayGroupId]) {
+        const tot2  = RUTINAS[todayGroupId].ejercicios.length;
+        const don2  = groupDoneCount(todayGroupId);
         const pct2  = tot2 ? Math.round((don2 / tot2) * 100) : 0;
         if (progEl) {
           progEl.style.display = 'block';
@@ -1071,7 +1104,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       }
 
       const avatarText = initialsFromName(perfil.nombre || '?');
-      document.getElementById('header-avatar-text').textContent = avatarText;
       const avatar = document.getElementById('header-avatar');
       if (perfil.foto) {
         avatar.innerHTML = `<img src="${perfil.foto}" alt="avatar">`;
@@ -1095,7 +1127,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 
       wrap.innerHTML = days.map(day => {
         const data = grouped[day];
-        const grupos = [...new Set(data.map(x => groupNameByExercise(x.exId)))];
+        const grupos = [...new Set(data.map(x => x.rutina && RUTINAS[x.rutina] ? RUTINAS[x.rutina].nombre : groupNameByExercise(x.exId)))];
         const formatted = formatDateShort(day);
         return `
           <div class="hist-card">
@@ -1170,14 +1202,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const groups = Object.entries(RUTINAS)
         .filter(([gid]) => currentTab === 'all' || gid === currentTab)
         .map(([gid, grupo]) => {
-          const rows = grupo.ejercicios.map((ex, idx) => exerciseRowHTML(ex, idx + 1, gid)).join('');
+          const color = routineColor(gid);
+          const rows = grupo.ejercicios.map((ex, idx) => exerciseRowHTML(ex, idx + 1, gid, color)).join('');
           const done  = groupDoneCount(gid);
           const total = grupo.ejercicios.length;
           const pct   = total ? Math.round((done / total) * 100) : 0;
           const allDone = done === total;
           return `
-            <div class="group-wrap gw-${gid}" id="gwrap-${gid}">
-              <div class="group-header gh-${gid}" id="header-${gid}" onclick="toggleGroup('${gid}')">
+            <div class="group-wrap gw-${color}" id="gwrap-${gid}">
+              <div class="group-header gh-${color}" id="header-${gid}" onclick="toggleGroup('${gid}')">
                 <div>
                   <div class="group-title">${grupo.nombre}</div>
                   <div class="group-sub">${done}/${total} ejercicios completados</div>
@@ -1190,10 +1223,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
                   <svg class="group-arrow" id="arrow-${gid}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
               </div>
-              <div class="group-progress-bar gp-${gid}">
-                <div class="group-progress-fill gpf-${gid}" style="width:${pct}%"></div>
+              <div class="group-progress-bar gp-${color}">
+                <div class="group-progress-fill gpf-${color}" style="width:${pct}%"></div>
               </div>
-              <div class="group-body gb-${gid}" id="body-${gid}">${rows}</div>
+              <div class="group-body gb-${color}" id="body-${gid}">${rows}</div>
             </div>
           `;
         });
@@ -1208,27 +1241,27 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       return Math.round(peso * (1 + reps / 30) * 10) / 10;
     }
 
-    function exerciseRowHTML(ex, index, gid) {
+    function exerciseRowHTML(ex, index, gid, color) {
       const hist = getHistorial()[ex.id] || [];
       const last = hist.length ? hist[hist.length - 1] : null;
       const today = new Date().toISOString().slice(0, 10);
       const doneToday = hist.some(x => x.fecha.slice(0, 10) === today);
       const orm = last ? calc1RM(last.peso, last.reps) : null;
       return `
-        <div class="exercise-row ex-${gid} ${doneToday ? 'done' : ''}">
-          <div class="exercise-num ex-num-${gid}">${index}</div>
-          <div class="exercise-main" onclick="openExerciseModal('${ex.id}')">
+        <div class="exercise-row ex-${color} ${doneToday ? 'done' : ''}">
+          <div class="exercise-num ex-num-${color}">${index}</div>
+          <div class="exercise-main" onclick="openExerciseModal('${ex.id}','${gid}')">
             <div class="exercise-name">${ex.nombre}</div>
             <div class="ex-pills">
-              <span class="ex-pill ep-${gid}">${ex.series} series</span>
-              <span class="ex-pill ep-${gid}">${ex.reps} reps</span>
+              <span class="ex-pill ep-${color}">${ex.series} series</span>
+              <span class="ex-pill ep-${color}">${ex.reps} reps</span>
               ${last ? `<span class="ex-pill ep-last">Último: ${last.peso}kg</span>` : '<span class="ex-pill ep-new">Sin registros</span>'}
             </div>
             ${orm ? `<div class="one-rm">1RM est. <span>${orm} kg</span></div>` : ''}
           </div>
           <div class="ex-right-col">
             ${doneToday ? `<span class="ex-done-badge">✓</span>` : ''}
-            <button class="graph-row-btn gr-${gid}" onclick="openGraph('${ex.id}')" title="Ver progreso">
+            <button class="graph-row-btn gr-${color}" onclick="openGraph('${ex.id}')" title="Ver progreso">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             </button>
           </div>
@@ -1300,17 +1333,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     }
 
     function goToTodayRutina() {
-      const gid = PLAN_SEMANAL[new Date().getDay()];
+      const gid = getNextRoutineKey();
       showScreen('rutinas');
       if (gid) {
-        // switch tab to that group
         currentTab = gid;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         const tabs = document.querySelectorAll('.tab');
-        const tabMap = { all: 0, fullbody: 1, torso: 2, pierna: 3 };
+        const tabMap = { all: 0, dia1: 1, dia2: 2, dia3: 3, dia4: 4 };
         if (tabs[tabMap[gid]]) tabs[tabMap[gid]].classList.add('active');
         buildRutinas();
-        // open the group
         setTimeout(() => toggleGroup(gid, true), 50);
       }
     }
@@ -1338,9 +1369,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       sel.classList.toggle('filled', !!sel.value);
     }
 
-    function openExerciseModal(exId) {
+    function openExerciseModal(exId, gid = null) {
       currentExerciseId = exId;
-      const ex = exerciseById(exId);
+      currentGroupId = gid || getRoutineKeyByExercise(exId);
+      const ex = currentGroupId ? RUTINAS[currentGroupId].ejercicios.find(e => e.id === exId) : exerciseById(exId);
       if (!ex) return;
       document.getElementById('ex-modal-title').textContent = ex.nombre;
       document.getElementById('ex-meta-series').textContent = ex.series;
@@ -1415,10 +1447,12 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         series: Number(series),
         reps: Number(reps),
         peso: Number(peso),
-        comment
+        comment,
+        rutina: currentGroupId
       };
       if (!APP.historial[currentExerciseId]) APP.historial[currentExerciseId] = [];
       APP.historial[currentExerciseId].push(item);
+      markRoutineCompletedIfReady(currentGroupId, item.fecha);
       await persistData();
       renderExerciseHistory(currentExerciseId);
       buildRutinas();

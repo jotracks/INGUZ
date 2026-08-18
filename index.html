@@ -264,6 +264,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   cursor:pointer;transition:background .12s;
 }
 .exercise-row:last-child{border-bottom:none}
+.exercise-row.skipped{background:rgba(255,77,77,.035)}
+.exercise-row.skipped .exercise-name{color:var(--muted2);text-decoration:line-through;text-decoration-thickness:1px}
 .exercise-num{font-size:13px;font-weight:800;min-width:22px;flex-shrink:0;color:var(--muted)}
 .exercise-main{flex:1;min-width:0}
 .exercise-name{font-size:16px;font-weight:700;line-height:1.2;color:var(--text)}
@@ -285,6 +287,11 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .ex-done-badge{
   font-size:10px;font-weight:800;width:26px;height:26px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
+}
+.ex-skip-badge{
+  font-size:13px;font-weight:900;width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--red);background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.28);
 }
 .graph-row-btn{
   width:32px;height:32px;border-radius:9px;flex-shrink:0;
@@ -396,7 +403,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   bottom:calc(88px + var(--safe));
   background:var(--text);color:var(--bg);
   border-radius:999px;padding:11px 22px;font-size:13px;font-weight:700;
-  opacity:0;pointer-events:none;transition:.22s ease;z-index:50;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:.22s ease;z-index:300;white-space:nowrap;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -460,6 +467,135 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .history-date{font-size:11px;color:var(--muted2);font-weight:700}
 .history-values{margin-top:4px;font-size:15px;font-weight:700;color:var(--text)}
 .history-note{margin-top:4px;color:var(--muted2);font-size:12px;font-style:italic}
+
+/* ── SWIPE EXERCISE CARD ── */
+.swipe-overlay{
+  align-items:center;padding:12px;
+  background:rgba(0,0,0,.91);overflow:hidden;
+}
+.swipe-stage{
+  width:100%;max-width:398px;height:min(780px,calc(100dvh - 24px));
+  display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:12px;
+  position:relative;
+}
+.swipe-card-stack{position:relative;min-height:0}
+.swipe-card-back{
+  position:absolute;inset:0;border-radius:28px;background:var(--s2);
+  border:1px solid var(--border2);pointer-events:none;
+}
+.swipe-card-back.back-2{transform:translateY(12px) scale(.94);opacity:.34}
+.swipe-card-back.back-1{transform:translateY(6px) scale(.97);opacity:.7}
+.swipe-card{
+  position:absolute;inset:0;border-radius:28px;background:var(--s1);
+  border:1px solid var(--border2);overflow:hidden;
+  box-shadow:0 24px 70px rgba(0,0,0,.48);
+  transform:translate3d(0,0,0) rotate(0deg);
+  will-change:transform;touch-action:pan-y;
+}
+.swipe-card.animating{transition:transform .27s cubic-bezier(.2,.72,.2,1),opacity .27s ease}
+.swipe-card.fly-right{transform:translate3d(130vw,-12px,0) rotate(18deg)!important;opacity:0}
+.swipe-card.fly-left{transform:translate3d(-130vw,-12px,0) rotate(-18deg)!important;opacity:0}
+.swipe-card.fly-down{transform:translate3d(0,115vh,0) rotate(0)!important;opacity:0}
+.swipe-card.entering{animation:cardEnter .24s cubic-bezier(.22,.68,0,1.2)}
+@keyframes cardEnter{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+.swipe-card-scroll{height:100%;overflow-y:auto;overscroll-behavior:contain;padding-bottom:18px;scrollbar-width:none}
+.swipe-card-scroll::-webkit-scrollbar{display:none}
+.swipe-grab-zone{
+  padding:18px 20px 16px;cursor:grab;touch-action:none;user-select:none;
+  background:linear-gradient(150deg,var(--gbg),var(--s1) 78%);
+  border-bottom:1px solid var(--gborder);
+}
+.swipe-grab-zone:active{cursor:grabbing}
+.swipe-topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.swipe-session{
+  color:var(--green);font-size:10px;font-weight:900;letter-spacing:2.2px;text-transform:uppercase;
+}
+.swipe-position{color:var(--muted2);font-size:11px;font-weight:800;white-space:nowrap}
+.swipe-title{
+  font-family:var(--fd);font-size:clamp(38px,10vw,54px);line-height:.92;
+  letter-spacing:1px;color:var(--text);margin-top:18px;max-width:92%;
+}
+.swipe-target{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.swipe-target-pill{
+  border:1px solid var(--gborder);background:rgba(181,242,61,.07);color:var(--green);
+  border-radius:999px;padding:6px 11px;font-size:11px;font-weight:800;
+}
+.swipe-drag-hint{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;color:var(--muted2);font-size:10px;font-weight:700;letter-spacing:.4px}
+.swipe-drag-line{width:42px;height:4px;border-radius:999px;background:var(--border2)}
+.previous-card{
+  margin:16px 18px 0;padding:15px;border-radius:18px;
+  background:linear-gradient(145deg,rgba(245,200,66,.09),var(--s2));
+  border:1px solid rgba(245,200,66,.22);
+}
+.previous-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.previous-label{font-size:10px;font-weight:900;letter-spacing:1.8px;color:var(--gold);text-transform:uppercase}
+.previous-date{font-size:11px;color:var(--muted2);font-weight:700}
+.previous-values{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.previous-metric{background:rgba(0,0,0,.18);border-radius:12px;padding:11px 12px}
+[data-theme="light"] .previous-metric{background:rgba(255,255,255,.48)}
+.previous-value{font-family:var(--fd);font-size:34px;line-height:1;color:var(--text);letter-spacing:.5px}
+.previous-unit{font-size:10px;color:var(--muted2);font-weight:800;text-transform:uppercase;margin-top:4px}
+.previous-empty{font-size:13px;color:var(--muted2);font-weight:600;margin-top:10px}
+.current-load{padding:18px 18px 4px}
+.current-load-title{font-size:10px;font-weight:900;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:10px}
+.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.metric-field{min-width:0}
+.metric-label{display:block;text-align:center;color:var(--muted2);font-size:10px;font-weight:900;letter-spacing:1px;margin-bottom:6px}
+.metric-stepper{
+  display:grid;grid-template-columns:28px minmax(0,1fr) 28px;align-items:center;
+  min-height:62px;background:var(--s2);border:1px solid var(--border2);border-radius:14px;overflow:hidden;
+}
+.metric-stepper:focus-within{border-color:var(--green)}
+.metric-stepper button{
+  height:100%;border:0;background:transparent;color:var(--muted2);font-size:23px;cursor:pointer;
+}
+.metric-stepper button:active{background:var(--s3);color:var(--text)}
+.metric-stepper input{
+  width:100%;min-width:0;border:0;background:transparent;color:var(--text);outline:0;
+  font-family:var(--fd);font-size:28px;text-align:center;appearance:textfield;-moz-appearance:textfield;
+}
+.metric-stepper input::-webkit-outer-spin-button,.metric-stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.swipe-comment{padding:13px 18px 0}
+.swipe-comment .textarea{min-height:62px;resize:none}
+.swipe-extras{display:flex;gap:8px;padding:12px 18px 0}
+.swipe-link-btn{
+  flex:1;border:1px solid var(--border2);background:var(--s2);color:var(--muted2);
+  border-radius:11px;padding:10px 8px;font-family:var(--fb);font-size:11px;font-weight:800;cursor:pointer;
+}
+.history-disclosure{margin:12px 18px 0;border-top:1px solid var(--border);padding-top:12px}
+.history-disclosure summary{list-style:none;color:var(--muted2);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;cursor:pointer}
+.history-disclosure summary::-webkit-details-marker{display:none}
+.history-disclosure[open] summary{color:var(--green);margin-bottom:10px}
+.history-disclosure .history-box{padding:0}
+.swipe-stamp{
+  position:absolute;z-index:5;top:96px;padding:8px 13px;border:3px solid currentColor;border-radius:10px;
+  font-family:var(--fd);font-size:32px;letter-spacing:2px;opacity:0;pointer-events:none;
+  transition:opacity .08s;transform:rotate(-10deg);
+}
+.swipe-stamp.show{opacity:1}
+.swipe-stamp.complete{right:18px;color:var(--green);transform:rotate(10deg)}
+.swipe-stamp.skip{left:18px;color:var(--red)}
+.swipe-stamp.close{left:50%;top:auto;bottom:24px;color:var(--muted2);transform:translateX(-50%)}
+.swipe-actions{display:flex;align-items:flex-start;justify-content:center;gap:28px;position:relative;z-index:6}
+.swipe-action-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.swipe-action{
+  width:62px;height:62px;border-radius:50%;background:var(--s1);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;color:var(--text);font-size:27px;cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);transition:transform .12s,background .12s;
+}
+.swipe-action:active{transform:scale(.9)}
+.swipe-action.skip{color:var(--red);border-color:rgba(255,77,77,.36)}
+.swipe-action.close{color:var(--muted2);width:52px;height:52px;font-size:22px;margin-top:5px}
+.swipe-action.complete{color:var(--green);border-color:rgba(181,242,61,.4)}
+.swipe-action:disabled{opacity:.25;cursor:not-allowed}
+.swipe-action-label{font-size:9px;color:rgba(255,255,255,.48);font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.swipe-legend{text-align:center;color:rgba(255,255,255,.42);font-size:10px;font-weight:700;letter-spacing:.3px;padding-bottom:max(0px,var(--safe))}
+@media (max-height:700px){
+  .swipe-stage{height:calc(100dvh - 16px);gap:8px}
+  .swipe-actions{gap:22px}.swipe-action{width:54px;height:54px}.swipe-action.close{width:46px;height:46px}
+  .swipe-action-label,.swipe-legend{display:none}
+  .swipe-title{font-size:38px}.swipe-grab-zone{padding-top:14px;padding-bottom:12px}
+}
 
 /* ── TIMER FAB ── */
 .timer-fab{
@@ -731,43 +867,111 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
   </button>
 
-  <!-- EXERCISE MODAL -->
-  <div class="overlay" id="exercise-overlay" onclick="closeExerciseModal(event)">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-header">
-        <div class="sheet-title" id="ex-modal-title">Ejercicio</div>
-        <button class="sheet-close" onclick="forceCloseExerciseModal()">✕</button>
+  <!-- SWIPE EXERCISE CARD -->
+  <div class="overlay swipe-overlay" id="exercise-overlay" onclick="closeExerciseModal(event)">
+    <div class="swipe-stage" role="dialog" aria-modal="true" aria-labelledby="ex-modal-title">
+      <div class="swipe-card-stack">
+        <div class="swipe-card-back back-2"></div>
+        <div class="swipe-card-back back-1"></div>
+        <article class="swipe-card" id="exercise-card">
+          <div class="swipe-stamp skip" id="swipe-stamp-skip">OMITIR</div>
+          <div class="swipe-stamp complete" id="swipe-stamp-complete">LISTO</div>
+          <div class="swipe-stamp close" id="swipe-stamp-close">VOLVER</div>
+          <div class="swipe-card-scroll" id="exercise-card-scroll">
+            <div class="swipe-grab-zone" id="swipe-grab-zone">
+              <div class="swipe-topline">
+                <span class="swipe-session" id="ex-modal-session">SESIÓN</span>
+                <span class="swipe-position" id="ex-modal-position">1 / 6</span>
+              </div>
+              <h2 class="swipe-title" id="ex-modal-title">Ejercicio</h2>
+              <div class="swipe-target">
+                <span class="swipe-target-pill"><span id="ex-meta-series">—</span> series</span>
+                <span class="swipe-target-pill"><span id="ex-meta-reps">—</span> reps objetivo</span>
+              </div>
+              <div class="swipe-drag-hint"><span>Arrastrá esta zona</span><span class="swipe-drag-line"></span></div>
+            </div>
+
+            <section class="previous-card">
+              <div class="previous-head">
+                <div class="previous-label">Último registro</div>
+                <div class="previous-date" id="previous-date">—</div>
+              </div>
+              <div class="previous-values" id="previous-values">
+                <div class="previous-metric">
+                  <div class="previous-value" id="previous-reps">—</div>
+                  <div class="previous-unit">repeticiones</div>
+                </div>
+                <div class="previous-metric">
+                  <div class="previous-value" id="previous-weight">—</div>
+                  <div class="previous-unit">kilogramos</div>
+                </div>
+              </div>
+              <div class="previous-empty" id="previous-empty" hidden>Este ejercicio todavía no tiene registros anteriores.</div>
+            </section>
+
+            <section class="current-load">
+              <div class="current-load-title" id="current-load-title">CARGAR ESTA VEZ</div>
+              <div class="metric-grid">
+                <div class="metric-field">
+                  <label class="metric-label" for="m-series">SERIES</label>
+                  <div class="metric-stepper">
+                    <button type="button" onclick="stepMetric('m-series',-1)" aria-label="Restar una serie">−</button>
+                    <input id="m-series" type="number" inputmode="numeric" min="1" max="20" step="1"/>
+                    <button type="button" onclick="stepMetric('m-series',1)" aria-label="Sumar una serie">+</button>
+                  </div>
+                </div>
+                <div class="metric-field">
+                  <label class="metric-label" for="m-reps">REPES</label>
+                  <div class="metric-stepper">
+                    <button type="button" onclick="stepMetric('m-reps',-1)" aria-label="Restar una repetición">−</button>
+                    <input id="m-reps" type="number" inputmode="numeric" min="1" max="100" step="1"/>
+                    <button type="button" onclick="stepMetric('m-reps',1)" aria-label="Sumar una repetición">+</button>
+                  </div>
+                </div>
+                <div class="metric-field">
+                  <label class="metric-label" for="m-peso">KG</label>
+                  <div class="metric-stepper">
+                    <button type="button" onclick="stepMetric('m-peso',-0.5)" aria-label="Restar medio kilogramo">−</button>
+                    <input id="m-peso" type="number" inputmode="decimal" min="0" max="500" step="0.5"/>
+                    <button type="button" onclick="stepMetric('m-peso',0.5)" aria-label="Sumar medio kilogramo">+</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="swipe-comment">
+              <label class="label" for="m-comment">Comentario opcional</label>
+              <textarea class="textarea" id="m-comment" placeholder="Técnica, esfuerzo, molestias…"></textarea>
+            </div>
+            <div class="swipe-extras">
+              <button class="swipe-link-btn" type="button" onclick="openRetroModal()">Cargar otra fecha</button>
+              <button class="swipe-link-btn" type="button" onclick="openGraph(currentExerciseId)">Ver progreso</button>
+            </div>
+            <details class="history-disclosure">
+              <summary>Ver registros anteriores</summary>
+              <div class="history-box">
+                <div class="history-list" id="exercise-history-list"></div>
+              </div>
+            </details>
+          </div>
+        </article>
       </div>
-      <div class="ex-meta" id="ex-modal-sub-wrap">
-        <div class="ex-meta-pill"><div class="ex-meta-lbl">Series</div><div class="ex-meta-val" id="ex-meta-series">—</div></div>
-        <div class="ex-meta-pill"><div class="ex-meta-lbl">Reps</div><div class="ex-meta-val" id="ex-meta-reps">—</div></div>
-      </div>
-      <div class="sheet-grid">
-        <div class="field">
-          <div class="srp-label">S</div>
-          <select class="srp-select" id="m-series" onchange="srpChg(this)"></select>
+
+      <div class="swipe-actions" aria-label="Acciones del ejercicio">
+        <div class="swipe-action-wrap">
+          <button class="swipe-action skip" id="swipe-skip-btn" type="button" onclick="triggerSwipeAction('skip')" aria-label="Omitir ejercicio">✕</button>
+          <span class="swipe-action-label">Omitir</span>
         </div>
-        <div class="field">
-          <div class="srp-label">R</div>
-          <select class="srp-select" id="m-reps" onchange="srpChg(this)"></select>
+        <div class="swipe-action-wrap">
+          <button class="swipe-action close" type="button" onclick="triggerSwipeAction('close')" aria-label="Cerrar sin cambios">↓</button>
+          <span class="swipe-action-label">Volver</span>
         </div>
-        <div class="field">
-          <div class="srp-label">KG</div>
-          <select class="srp-select" id="m-peso" onchange="srpChg(this)"></select>
+        <div class="swipe-action-wrap">
+          <button class="swipe-action complete" type="button" onclick="triggerSwipeAction('complete')" aria-label="Guardar y completar ejercicio">✓</button>
+          <span class="swipe-action-label">Completar</span>
         </div>
       </div>
-      <div style="padding:0 20px 14px">
-        <label class="label">Comentario</label>
-        <textarea class="textarea" id="m-comment" placeholder="Cómo te sentiste, técnica, etc."></textarea>
-      </div>
-      <button class="secondary-btn" onclick="openRetroModal()">Cargar registro retroactivo</button>
-      <div style="height:10px"></div>
-      <button class="save-btn" onclick="saveExerciseModal()">Guardar registro</button>
-      <div class="history-box">
-        <div class="history-title">Registros anteriores</div>
-        <div class="history-list" id="exercise-history-list"></div>
-      </div>
+      <div class="swipe-legend">← omitir · ↓ volver · completar →</div>
     </div>
   </div>
 
@@ -911,6 +1115,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     let APP = {
       perfil: {},
       historial: {},
+      omitidos: {},
       ultimaRutina: null
     };
 
@@ -920,6 +1125,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     let timerTotal = 120;
     let timerRemaining = 120;
     let timerInterval = null;
+    let swipeBusy = false;
+    const swipeState = {
+      active: false,
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      dx: 0,
+      dy: 0
+    };
 
     function getDefaultData() {
       return {
@@ -932,6 +1146,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           foto: ''
         },
         historial: {},
+        omitidos: {},
         ultimaRutina: null
       };
     }
@@ -941,6 +1156,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const merged = {
         perfil: { ...base.perfil, ...(data?.perfil || {}) },
         historial: typeof data?.historial === 'object' && data?.historial ? data.historial : {},
+        omitidos: typeof data?.omitidos === 'object' && data?.omitidos ? data.omitidos : {},
         ultimaRutina: RUTINA_ORDEN.includes(data?.ultimaRutina) ? data.ultimaRutina : null
       };
       return merged;
@@ -1008,6 +1224,51 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       return APP.historial;
     }
 
+    function todayKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function skippedExerciseIds(day, gid) {
+      const ids = APP.omitidos?.[day]?.[gid];
+      return Array.isArray(ids) ? ids : [];
+    }
+
+    function isExerciseSkippedOnDay(exId, gid, day = todayKey()) {
+      return skippedExerciseIds(day, gid).includes(exId);
+    }
+
+    function isExerciseCompletedOnDay(exId, gid, day = todayKey()) {
+      return (APP.historial[exId] || []).some(reg =>
+        reg.fecha.slice(0, 10) === day && (!reg.rutina || reg.rutina === gid)
+      );
+    }
+
+    function setExerciseSkipped(exId, gid, day = todayKey()) {
+      if (!APP.omitidos[day]) APP.omitidos[day] = {};
+      if (!Array.isArray(APP.omitidos[day][gid])) APP.omitidos[day][gid] = [];
+      if (!APP.omitidos[day][gid].includes(exId)) APP.omitidos[day][gid].push(exId);
+    }
+
+    function clearExerciseSkipped(exId, gid, day = todayKey()) {
+      const ids = APP.omitidos?.[day]?.[gid];
+      if (!Array.isArray(ids)) return;
+      APP.omitidos[day][gid] = ids.filter(id => id !== exId);
+      if (!APP.omitidos[day][gid].length) delete APP.omitidos[day][gid];
+      if (!Object.keys(APP.omitidos[day]).length) delete APP.omitidos[day];
+    }
+
+    function groupStatusCounts(gid, day = todayKey()) {
+      const grupo = RUTINAS[gid];
+      if (!grupo) return { completed: 0, skipped: 0, resolved: 0, total: 0 };
+      let completed = 0;
+      let skipped = 0;
+      grupo.ejercicios.forEach(ex => {
+        if (isExerciseCompletedOnDay(ex.id, gid, day)) completed += 1;
+        else if (isExerciseSkippedOnDay(ex.id, gid, day)) skipped += 1;
+      });
+      return { completed, skipped, resolved: completed + skipped, total: grupo.ejercicios.length };
+    }
+
     function getNextRoutineKey() {
       const lastKey = APP.ultimaRutina || null;
       if (!lastKey || !RUTINA_ORDEN.includes(lastKey)) return RUTINA_ORDEN[0];
@@ -1024,10 +1285,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const grupo = RUTINAS[gid];
       if (!grupo) return false;
       const day = dateStr.slice(0, 10);
-      const completed = grupo.ejercicios.every(ex =>
-        (APP.historial[ex.id] || []).some(reg => reg.fecha.slice(0, 10) === day)
+      const resolved = grupo.ejercicios.every(ex =>
+        isExerciseCompletedOnDay(ex.id, gid, day) || isExerciseSkippedOnDay(ex.id, gid, day)
       );
-      if (completed) {
+      if (resolved) {
         APP.ultimaRutina = gid;
         return true;
       }
@@ -1090,13 +1351,14 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 
       const progEl = document.getElementById('session-progress');
       if (todayGroupId && RUTINAS[todayGroupId]) {
-        const tot2  = RUTINAS[todayGroupId].ejercicios.length;
-        const don2  = groupDoneCount(todayGroupId);
-        const pct2  = tot2 ? Math.round((don2 / tot2) * 100) : 0;
+        const status = groupStatusCounts(todayGroupId);
+        const pct2  = status.total ? Math.round((status.resolved / status.total) * 100) : 0;
         if (progEl) {
           progEl.style.display = 'block';
           document.getElementById('sp-pct').textContent   = pct2 + '%';
-          document.getElementById('sp-count').textContent = don2 + ' / ' + tot2;
+          document.getElementById('sp-count').textContent = status.skipped
+            ? `${status.completed} completas · ${status.skipped} omitidas`
+            : `${status.completed} / ${status.total}`;
           document.getElementById('sp-fill').style.width  = pct2 + '%';
         }
       } else if (progEl) {
@@ -1189,12 +1451,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     }
 
     function groupDoneCount(gid) {
-      const today = new Date().toISOString().slice(0, 10);
-      const grupo = RUTINAS[gid];
-      if (!grupo) return 0;
-      return grupo.ejercicios.filter(ex =>
-        (getHistorial()[ex.id] || []).some(x => x.fecha.slice(0,10) === today)
-      ).length;
+      return groupStatusCounts(gid).completed;
     }
 
     function buildRutinas() {
@@ -1204,16 +1461,18 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         .map(([gid, grupo]) => {
           const color = routineColor(gid);
           const rows = grupo.ejercicios.map((ex, idx) => exerciseRowHTML(ex, idx + 1, gid, color)).join('');
-          const done  = groupDoneCount(gid);
-          const total = grupo.ejercicios.length;
-          const pct   = total ? Math.round((done / total) * 100) : 0;
-          const allDone = done === total;
+          const status = groupStatusCounts(gid);
+          const pct   = status.total ? Math.round((status.resolved / status.total) * 100) : 0;
+          const allDone = status.resolved === status.total;
+          const statusText = status.skipped
+            ? `${status.completed} completados · ${status.skipped} omitidos`
+            : `${status.completed}/${status.total} ejercicios completados`;
           return `
             <div class="group-wrap gw-${color}" id="gwrap-${gid}">
               <div class="group-header gh-${color}" id="header-${gid}" onclick="toggleGroup('${gid}')">
                 <div>
                   <div class="group-title">${grupo.nombre}</div>
-                  <div class="group-sub">${done}/${total} ejercicios completados</div>
+                  <div class="group-sub">${statusText}</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:12px;">
                   ${allDone
@@ -1244,23 +1503,25 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     function exerciseRowHTML(ex, index, gid, color) {
       const hist = getHistorial()[ex.id] || [];
       const last = hist.length ? hist[hist.length - 1] : null;
-      const today = new Date().toISOString().slice(0, 10);
-      const doneToday = hist.some(x => x.fecha.slice(0, 10) === today);
+      const today = todayKey();
+      const doneToday = isExerciseCompletedOnDay(ex.id, gid, today);
+      const skippedToday = !doneToday && isExerciseSkippedOnDay(ex.id, gid, today);
       const orm = last ? calc1RM(last.peso, last.reps) : null;
       return `
-        <div class="exercise-row ex-${color} ${doneToday ? 'done' : ''}">
+        <div class="exercise-row ex-${color} ${doneToday ? 'done' : ''} ${skippedToday ? 'skipped' : ''}">
           <div class="exercise-num ex-num-${color}">${index}</div>
           <div class="exercise-main" onclick="openExerciseModal('${ex.id}','${gid}')">
             <div class="exercise-name">${ex.nombre}</div>
             <div class="ex-pills">
               <span class="ex-pill ep-${color}">${ex.series} series</span>
               <span class="ex-pill ep-${color}">${ex.reps} reps</span>
-              ${last ? `<span class="ex-pill ep-last">Último: ${last.peso}kg</span>` : '<span class="ex-pill ep-new">Sin registros</span>'}
+              ${last ? `<span class="ex-pill ep-last">Último: ${last.reps} rep · ${last.peso}kg</span>` : '<span class="ex-pill ep-new">Sin registros</span>'}
             </div>
             ${orm ? `<div class="one-rm">1RM est. <span>${orm} kg</span></div>` : ''}
           </div>
           <div class="ex-right-col">
             ${doneToday ? `<span class="ex-done-badge">✓</span>` : ''}
+            ${skippedToday ? `<span class="ex-skip-badge" title="Omitido hoy">−</span>` : ''}
             <button class="graph-row-btn gr-${color}" onclick="openGraph('${ex.id}')" title="Ver progreso">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             </button>
@@ -1365,37 +1626,96 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       window.__toastT = setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
-    function srpChg(sel) {
-      sel.classList.toggle('filled', !!sel.value);
+    function suggestedReps(value) {
+      const match = String(value ?? '').match(/\d+/);
+      return match ? Number(match[0]) : '';
     }
 
-    function openExerciseModal(exId, gid = null) {
+    function previousExerciseEntry(exId, excludeDay = todayKey()) {
+      return (getHistorial()[exId] || [])
+        .filter(item => item.fecha.slice(0, 10) !== excludeDay)
+        .slice()
+        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0] || null;
+    }
+
+    function todayExerciseEntry(exId, gid) {
+      const day = todayKey();
+      return (getHistorial()[exId] || [])
+        .slice()
+        .reverse()
+        .find(item => item.fecha.slice(0, 10) === day && (!item.rutina || item.rutina === gid)) || null;
+    }
+
+    function shortDisplayDate(dateStr) {
+      const [year, month, day] = dateStr.slice(0, 10).split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function stepMetric(inputId, delta) {
+      const input = document.getElementById(inputId);
+      const min = Number(input.min || 0);
+      const max = Number(input.max || Number.MAX_SAFE_INTEGER);
+      const current = input.value === '' ? min : Number(input.value);
+      const next = Math.min(max, Math.max(min, Math.round((current + delta) * 10) / 10));
+      input.value = next;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    function populatePreviousCard(entry) {
+      const values = document.getElementById('previous-values');
+      const empty = document.getElementById('previous-empty');
+      if (!entry) {
+        values.hidden = true;
+        empty.hidden = false;
+        document.getElementById('previous-date').textContent = 'SIN DATOS';
+        return;
+      }
+      values.hidden = false;
+      empty.hidden = true;
+      document.getElementById('previous-date').textContent = shortDisplayDate(entry.fecha);
+      document.getElementById('previous-reps').textContent = entry.reps;
+      document.getElementById('previous-weight').textContent = entry.peso;
+    }
+
+    function openExerciseModal(exId, gid = null, animateEntry = false) {
       currentExerciseId = exId;
       currentGroupId = gid || getRoutineKeyByExercise(exId);
-      const ex = currentGroupId ? RUTINAS[currentGroupId].ejercicios.find(e => e.id === exId) : exerciseById(exId);
-      if (!ex) return;
+      const grupo = RUTINAS[currentGroupId];
+      const ex = grupo?.ejercicios.find(item => item.id === exId) || exerciseById(exId);
+      if (!ex || !grupo) return;
+
+      const exerciseIndex = grupo.ejercicios.findIndex(item => item.id === exId);
+      const hist = getHistorial()[exId] || [];
+      const previous = previousExerciseEntry(exId);
+      const todayEntry = todayExerciseEntry(exId, currentGroupId);
+      const seed = todayEntry || previous || (hist.length ? hist[hist.length - 1] : null);
+      const skippedToday = isExerciseSkippedOnDay(exId, currentGroupId);
+
+      document.getElementById('ex-modal-session').textContent = grupo.nombre;
+      document.getElementById('ex-modal-position').textContent = `${exerciseIndex + 1} / ${grupo.ejercicios.length}`;
       document.getElementById('ex-modal-title').textContent = ex.nombre;
       document.getElementById('ex-meta-series').textContent = ex.series;
       document.getElementById('ex-meta-reps').textContent = ex.reps;
+      document.getElementById('current-load-title').textContent = todayEntry
+        ? 'EDITAR REGISTRO DE HOY'
+        : skippedToday ? 'OMITIDO HOY · CARGALO PARA COMPLETAR' : 'CARGAR ESTA VEZ';
+      populatePreviousCard(previous);
 
-      const hist = getHistorial()[exId] || [];
-      const last = hist.length ? hist[hist.length - 1] : null;
+      document.getElementById('m-series').value = seed?.series ?? ex.series ?? '';
+      document.getElementById('m-reps').value = seed?.reps ?? suggestedReps(ex.reps);
+      document.getElementById('m-peso').value = seed?.peso ?? '';
+      document.getElementById('m-comment').value = todayEntry?.comment || '';
+      document.getElementById('swipe-skip-btn').disabled = !!todayEntry;
 
-      const ms = document.getElementById('m-series');
-      const mr = document.getElementById('m-reps');
-      const mp = document.getElementById('m-peso');
-      ms.value = last?.series || ex.series || '';
-      mr.value = last?.reps || '';
-      mp.value = last?.peso || '';
-      [ms, mr, mp].forEach(s => s.classList.toggle('filled', !!s.value));
-      document.getElementById('m-comment').value = '';
       renderExerciseHistory(exId);
+      resetSwipeCard(animateEntry);
+      document.getElementById('exercise-card-scroll').scrollTop = 0;
       document.getElementById('exercise-overlay').classList.add('show');
       document.body.style.overflow = 'hidden';
-      document.getElementById('retro-date').value = new Date().toISOString().slice(0, 10);
-      document.getElementById('retro-series').value = last?.series || ex.series || '';
-      document.getElementById('retro-reps').value = last?.reps || '';
-      document.getElementById('retro-peso').value = last?.peso || '';
+      document.getElementById('retro-date').value = todayKey();
+      document.getElementById('retro-series').value = seed?.series ?? ex.series ?? '';
+      document.getElementById('retro-reps').value = seed?.reps ?? suggestedReps(ex.reps);
+      document.getElementById('retro-peso').value = seed?.peso ?? '';
       document.getElementById('retro-comment').value = '';
     }
 
@@ -1432,34 +1752,238 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       showToast('Registro eliminado');
     }
 
-    async function saveExerciseModal() {
-      if (!currentExerciseId) return;
-      const series = document.getElementById('m-series').value;
-      const reps = document.getElementById('m-reps').value;
-      const peso = document.getElementById('m-peso').value;
-      if (!series || !reps || !peso) {
-        showToast('Completá series, reps y peso');
-        return;
+    function readExerciseForm() {
+      const fields = [
+        { id: 'm-series', label: 'series', min: 1 },
+        { id: 'm-reps', label: 'repeticiones', min: 1 },
+        { id: 'm-peso', label: 'peso', min: 0 }
+      ];
+      for (const field of fields) {
+        const input = document.getElementById(field.id);
+        if (input.value === '' || !Number.isFinite(Number(input.value)) || Number(input.value) < field.min) {
+          showToast(`Completá ${field.label}`);
+          input.focus();
+          return null;
+        }
       }
-      const comment = document.getElementById('m-comment').value.trim();
+      return {
+        series: Number(document.getElementById('m-series').value),
+        reps: Number(document.getElementById('m-reps').value),
+        peso: Number(document.getElementById('m-peso').value),
+        comment: document.getElementById('m-comment').value.trim()
+      };
+    }
+
+    async function saveCurrentExercise(values) {
+      if (!currentExerciseId || !currentGroupId || !values) return false;
+      const day = todayKey();
+      const records = APP.historial[currentExerciseId] || [];
+      const existingIndex = records.findIndex(item =>
+        item.fecha.slice(0, 10) === day && (!item.rutina || item.rutina === currentGroupId)
+      );
+      const existing = existingIndex >= 0 ? records[existingIndex] : null;
       const item = {
-        fecha: new Date().toISOString(),
-        series: Number(series),
-        reps: Number(reps),
-        peso: Number(peso),
-        comment,
+        fecha: existing?.fecha || new Date().toISOString(),
+        series: values.series,
+        reps: values.reps,
+        peso: values.peso,
+        comment: values.comment,
         rutina: currentGroupId
       };
       if (!APP.historial[currentExerciseId]) APP.historial[currentExerciseId] = [];
-      APP.historial[currentExerciseId].push(item);
+      if (existingIndex >= 0) APP.historial[currentExerciseId][existingIndex] = item;
+      else APP.historial[currentExerciseId].push(item);
+      clearExerciseSkipped(currentExerciseId, currentGroupId, day);
       markRoutineCompletedIfReady(currentGroupId, item.fecha);
       await persistData();
-      renderExerciseHistory(currentExerciseId);
+      refreshWorkoutViews();
+      return existingIndex >= 0 ? 'updated' : 'created';
+    }
+
+    async function skipCurrentExercise() {
+      if (!currentExerciseId || !currentGroupId) return false;
+      if (isExerciseCompletedOnDay(currentExerciseId, currentGroupId)) {
+        showToast('Este ejercicio ya está completado hoy');
+        return false;
+      }
+      setExerciseSkipped(currentExerciseId, currentGroupId);
+      markRoutineCompletedIfReady(currentGroupId, `${todayKey()}T12:00:00.000Z`);
+      await persistData();
+      refreshWorkoutViews();
+      return true;
+    }
+
+    function refreshWorkoutViews() {
       buildRutinas();
       updateHome();
       updatePerfil();
-      showToast('Registro guardado');
-      forceCloseExerciseModal();
+    }
+
+    function nextPendingExercise(gid, afterExId) {
+      const exercises = RUTINAS[gid]?.ejercicios || [];
+      const currentIndex = exercises.findIndex(ex => ex.id === afterExId);
+      for (let offset = 1; offset <= exercises.length; offset += 1) {
+        const candidate = exercises[(currentIndex + offset) % exercises.length];
+        if (!candidate || candidate.id === afterExId) continue;
+        if (!isExerciseCompletedOnDay(candidate.id, gid) && !isExerciseSkippedOnDay(candidate.id, gid)) return candidate;
+      }
+      return null;
+    }
+
+    function advanceExerciseCard(actionLabel) {
+      const completedGid = currentGroupId;
+      const completedExId = currentExerciseId;
+      const next = nextPendingExercise(completedGid, completedExId);
+      if (next) {
+        openExerciseModal(next.id, completedGid, true);
+        showToast(`${actionLabel} · siguiente ejercicio`);
+      } else {
+        forceCloseExerciseModal();
+        showToast(`${RUTINAS[completedGid].nombre} resuelta`);
+      }
+    }
+
+    function resetSwipeStamps() {
+      ['skip', 'complete', 'close'].forEach(name => {
+        const stamp = document.getElementById(`swipe-stamp-${name}`);
+        stamp.classList.remove('show');
+        stamp.style.opacity = '';
+      });
+    }
+
+    function resetSwipeCard(animateEntry = false) {
+      const card = document.getElementById('exercise-card');
+      card.classList.remove('animating', 'fly-left', 'fly-right', 'fly-down', 'entering');
+      card.style.transform = '';
+      card.style.opacity = '';
+      resetSwipeStamps();
+      if (animateEntry) {
+        void card.offsetWidth;
+        card.classList.add('entering');
+      }
+      swipeState.active = false;
+      swipeState.pointerId = null;
+      swipeState.dx = 0;
+      swipeState.dy = 0;
+    }
+
+    function snapSwipeCard() {
+      const card = document.getElementById('exercise-card');
+      card.classList.add('animating');
+      card.style.transform = 'translate3d(0,0,0) rotate(0deg)';
+      resetSwipeStamps();
+      setTimeout(() => card.classList.remove('animating'), 280);
+    }
+
+    function showSwipeDirection(direction, strength) {
+      resetSwipeStamps();
+      const stamp = document.getElementById(`swipe-stamp-${direction}`);
+      if (!stamp || strength < .12) return;
+      stamp.classList.add('show');
+      stamp.style.opacity = Math.min(1, strength);
+    }
+
+    function updateSwipeDrag(dx, dy) {
+      const card = document.getElementById('exercise-card');
+      const down = Math.max(0, dy);
+      if (Math.abs(dx) >= down) {
+        card.style.transform = `translate3d(${dx}px,${dy * .12}px,0) rotate(${dx / 18}deg)`;
+        showSwipeDirection(dx >= 0 ? 'complete' : 'skip', Math.abs(dx) / 100);
+      } else {
+        card.style.transform = `translate3d(0,${down}px,0) rotate(0deg)`;
+        showSwipeDirection('close', down / 110);
+      }
+    }
+
+    function onSwipePointerDown(event) {
+      if (swipeBusy || event.button !== 0) return;
+      swipeState.active = true;
+      swipeState.pointerId = event.pointerId;
+      swipeState.startX = event.clientX;
+      swipeState.startY = event.clientY;
+      swipeState.dx = 0;
+      swipeState.dy = 0;
+      document.getElementById('exercise-card').classList.remove('animating', 'entering');
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    function onSwipePointerMove(event) {
+      if (!swipeState.active || event.pointerId !== swipeState.pointerId) return;
+      swipeState.dx = event.clientX - swipeState.startX;
+      swipeState.dy = event.clientY - swipeState.startY;
+      updateSwipeDrag(swipeState.dx, swipeState.dy);
+    }
+
+    function onSwipePointerEnd(event) {
+      if (!swipeState.active || event.pointerId !== swipeState.pointerId) return;
+      swipeState.active = false;
+      const absX = Math.abs(swipeState.dx);
+      const down = Math.max(0, swipeState.dy);
+      if (absX >= 88 && absX >= down) {
+        triggerSwipeAction(swipeState.dx > 0 ? 'complete' : 'skip');
+      } else if (down >= 96 && down > absX) {
+        triggerSwipeAction('close');
+      } else {
+        snapSwipeCard();
+      }
+    }
+
+    function bindSwipeInteractions() {
+      const zone = document.getElementById('swipe-grab-zone');
+      zone.addEventListener('pointerdown', onSwipePointerDown);
+      zone.addEventListener('pointermove', onSwipePointerMove);
+      zone.addEventListener('pointerup', onSwipePointerEnd);
+      zone.addEventListener('pointercancel', onSwipePointerEnd);
+      document.addEventListener('keydown', event => {
+        if (!document.getElementById('exercise-overlay').classList.contains('show')) return;
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+        if (event.key === 'ArrowLeft') { event.preventDefault(); triggerSwipeAction('skip'); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); triggerSwipeAction('complete'); }
+        if (event.key === 'ArrowDown' || event.key === 'Escape') { event.preventDefault(); triggerSwipeAction('close'); }
+      });
+    }
+
+    function triggerSwipeAction(action) {
+      if (swipeBusy) return;
+      let values = null;
+      if (action === 'complete') {
+        values = readExerciseForm();
+        if (!values) {
+          snapSwipeCard();
+          return;
+        }
+      }
+      if (action === 'skip' && isExerciseCompletedOnDay(currentExerciseId, currentGroupId)) {
+        showToast('Ya está completado: podés editarlo o volver');
+        snapSwipeCard();
+        return;
+      }
+
+      swipeBusy = true;
+      const card = document.getElementById('exercise-card');
+      card.classList.add('animating', action === 'complete' ? 'fly-right' : action === 'skip' ? 'fly-left' : 'fly-down');
+      setTimeout(async () => {
+        if (action === 'close') {
+          forceCloseExerciseModal();
+          swipeBusy = false;
+          return;
+        }
+        if (action === 'complete') {
+          const saved = await saveCurrentExercise(values);
+          swipeBusy = false;
+          if (saved) advanceExerciseCard(saved === 'updated' ? 'Registro actualizado' : 'Ejercicio completado');
+          else resetSwipeCard();
+          return;
+        }
+        const skipped = await skipCurrentExercise();
+        swipeBusy = false;
+        if (skipped) advanceExerciseCard('Ejercicio omitido');
+        else resetSwipeCard();
+      }, 250);
+    }
+
+    function saveExerciseModal() {
+      triggerSwipeAction('complete');
     }
 
     function closeExerciseModal(e) {
@@ -1468,6 +1992,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     function forceCloseExerciseModal() {
       document.getElementById('exercise-overlay').classList.remove('show');
       document.body.style.overflow = '';
+      resetSwipeCard();
     }
 
     function openRetroModal() {
@@ -1492,7 +2017,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       }
       // Bloquear fecha duplicada para el mismo ejercicio
       const yaExiste = (APP.historial[currentExerciseId] || [])
-        .some(r => r.fecha.slice(0, 10) === fecha);
+        .some(r => r.fecha.slice(0, 10) === fecha && (!r.rutina || r.rutina === currentGroupId));
       if (yaExiste) {
         showToast('Ya hay un registro para esa fecha');
         return;
@@ -1502,11 +2027,14 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         series: Number(series),
         reps: Number(reps),
         peso: Number(peso),
-        comment: document.getElementById('retro-comment').value.trim()
+        comment: document.getElementById('retro-comment').value.trim(),
+        rutina: currentGroupId
       };
       if (!APP.historial[currentExerciseId]) APP.historial[currentExerciseId] = [];
       APP.historial[currentExerciseId].push(item);
       APP.historial[currentExerciseId].sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+      if (fecha === todayKey()) clearExerciseSkipped(currentExerciseId, currentGroupId, fecha);
+      markRoutineCompletedIfReady(currentGroupId, item.fecha);
       await persistData();
       renderExerciseHistory(currentExerciseId);
       buildRutinas();
@@ -1682,12 +2210,9 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     });
 
     function seedSelects() {
-  buildSelectOptions('m-series', 1, 10);
-  buildSelectOptions('m-reps', 1, 30);
-  buildSelectOptions('m-peso', 0, 100, 0.5, 'kg');
   buildSelectOptions('retro-series', 1, 10);
   buildSelectOptions('retro-reps', 1, 30);
-  buildSelectOptions('retro-peso', 0, 100, 0.5, 'kg');
+  buildSelectOptions('retro-peso', 0, 300, 0.5, 'kg');
 }
 
 
@@ -1853,6 +2378,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     document.addEventListener('DOMContentLoaded', async () => {
       applyTheme(localStorage.getItem('inguz_theme') || 'dark');
       seedSelects();
+      bindSwipeInteractions();
       updateTimerDisplay();
       if (localStorage.getItem(AUTH_KEY) === '1') {
         document.getElementById('auth-screen').style.display = 'none';

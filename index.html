@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>INGUZ — Training</title>
+  <title>INGUZ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -33,9 +33,9 @@
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justify-content:center}
+body{background:#000;color:var(--text);font-family:var(--fb);font-size:16px;display:flex;justify-content:center}
 [data-theme="light"] body{background:#ddd}
-.phone{width:100%;max-width:430px;min-height:100%;background:var(--bg);position:relative;overflow-x:hidden}
+.phone{width:100%;max-width:460px;min-height:100%;background:var(--bg);position:relative;overflow-x:hidden}
 
 /* ── SCREEN TRANSITIONS ── */
 .screen{display:none;min-height:100vh;padding-bottom:calc(80px + var(--safe))}
@@ -47,15 +47,14 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   position:sticky;top:0;z-index:20;
   background:rgba(5,5,5,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border);
-  padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;display:flex;align-items:center;justify-content:space-between;
 }
 [data-theme="light"] .header{background:rgba(240,240,240,.94)}
-.brand{display:flex;flex-direction:column;gap:1px}
-.brand-title{font-family:var(--fd);font-size:30px;letter-spacing:3px;line-height:1;color:var(--text)}
-.brand-sub{font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:3px;font-weight:700}
+.brand{display:flex;align-items:center}
+.brand-title{font-family:var(--fd);font-size:35px;letter-spacing:3px;line-height:1;color:var(--text)}
 .avatar{
-  width:40px;height:40px;border-radius:50%;background:var(--green);
-  color:#000;font-weight:800;font-size:14px;
+  width:44px;height:44px;border-radius:50%;background:var(--green);
+  color:#000;font-weight:800;font-size:15px;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;overflow:hidden;border:2px solid transparent;transition:border-color .2s;
 }
@@ -65,49 +64,14 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 /* ── SECTION TITLE ── */
 .section-title{
   padding:20px 18px 10px;
-  font-size:11px;font-weight:800;color:var(--muted2);
+  font-size:12px;font-weight:800;color:var(--muted2);
   text-transform:uppercase;letter-spacing:3px;
   display:flex;align-items:center;gap:10px;
 }
 .section-title::after{content:'';flex:1;height:1px;background:var(--border2);border-radius:1px}
 
-/* ── HERO ── */
-.hero{
-  margin:12px 14px 0;
-  background:linear-gradient(150deg,var(--gbg) 0%,var(--bg) 70%);
-  border:1px solid var(--gborder);border-radius:22px;
-  padding:22px 20px 20px;position:relative;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;top:-60px;right:-60px;
-  width:200px;height:200px;border-radius:50%;
-  background:radial-gradient(circle,rgba(181,242,61,.13),transparent 68%);
-  pointer-events:none;
-}
-.hero-kicker{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(181,242,61,.1);border:1px solid rgba(181,242,61,.22);
-  color:var(--green);border-radius:999px;
-  font-size:10px;font-weight:800;letter-spacing:2.5px;
-  padding:5px 12px;text-transform:uppercase;margin-bottom:12px;
-}
-.hero-title{font-family:var(--fd);font-size:50px;line-height:.9;letter-spacing:1px;color:var(--text)}
-.hero-sub{color:var(--muted2);font-size:14px;margin-top:8px;line-height:1.45;font-weight:500}
-.hero-btn{
-  margin-top:18px;border:none;background:var(--green);color:#000;
-  font-weight:800;font-size:14px;padding:12px 22px;border-radius:999px;
-  cursor:pointer;font-family:var(--fb);
-  display:inline-flex;align-items:center;gap:7px;
-  transition:transform .12s,opacity .12s;
-}
-.hero-btn:active{transform:scale(.95);opacity:.88}
-.sync-badge{display:inline-flex;gap:6px;align-items:center;font-size:11px;color:var(--muted2);margin-top:12px}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted2);opacity:.35}
-.sync-dot.ok{background:var(--green);opacity:1}
-.sync-dot.err{background:var(--red);opacity:1}
-
 /* ── STATS ── */
-.stats-row{padding:0 14px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats-row{padding:18px 14px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-card{
   background:var(--s1);border:1px solid var(--border2);
   border-radius:16px;padding:16px 10px;text-align:center;
@@ -118,7 +82,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   background:linear-gradient(90deg,var(--green2),var(--green));
 }
 .stat-num{font-family:var(--fd);font-size:44px;color:var(--green);line-height:1}
-.stat-lbl{margin-top:5px;font-size:11px;color:var(--muted2);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
+.stat-lbl{margin-top:5px;font-size:12px;color:var(--muted2);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
 
 /* ── TODAY CARD ── */
 .today-card{
@@ -134,26 +98,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   background:rgba(181,242,61,.08);border:1px solid rgba(181,242,61,.18);
   display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
 }
-.today-label{color:var(--green);font-size:10px;text-transform:uppercase;font-weight:800;letter-spacing:2.5px}
-.today-name{font-family:var(--fd);font-size:26px;margin-top:2px;letter-spacing:1px;color:var(--text)}
-.today-sub{font-size:13px;color:var(--muted2);margin-top:3px;font-weight:500}
-
-/* ── SESSION PROGRESS ── */
-.session-progress{
-  margin:0 14px;
-  background:var(--s1);border:1px solid var(--border2);border-radius:16px;padding:14px 16px;
-}
-.sp-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
-.sp-label{font-size:12px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px}
-.sp-right{text-align:right}
-.sp-pct{font-family:var(--fd);font-size:28px;color:var(--green);line-height:1}
-.sp-count{font-size:11px;color:var(--muted2);font-weight:600;margin-top:1px}
-.sp-bar{height:8px;background:var(--s3);border-radius:999px;overflow:hidden}
-.sp-fill{
-  height:100%;border-radius:999px;
-  background:linear-gradient(90deg,var(--green2),var(--green));
-  transition:width .7s cubic-bezier(.22,.68,0,1.2);
-}
+.today-name{font-family:var(--fd);font-size:31px;letter-spacing:1px;color:var(--text)}
+.today-sub{font-size:15px;color:var(--muted2);margin-top:4px;font-weight:500}
 
 /* ── HIST LIST ── */
 .hist-list{display:flex;flex-direction:column;gap:8px;padding:0 14px}
@@ -168,8 +114,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .hist-day{font-family:var(--fd);font-size:30px;color:var(--green);line-height:1}
 .hist-mon{font-size:10px;color:var(--muted2);text-transform:uppercase;font-weight:700;margin-top:2px;letter-spacing:.5px}
 .hist-main{flex:1}
-.hist-title{font-size:15px;font-weight:700;color:var(--text)}
-.hist-sub{font-size:12px;color:var(--muted2);margin-top:3px;font-weight:500}
+.hist-title{font-size:17px;font-weight:750;color:var(--text)}
 .hist-badge{
   color:var(--green);font-size:11px;font-weight:800;
   border:1px solid rgba(181,242,61,.2);background:rgba(181,242,61,.07);
@@ -177,16 +122,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 }
 
 /* ── TABS ── */
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:0 14px;scrollbar-width:none}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:20px 14px 0;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{
   border:1px solid var(--border2);background:var(--s1);
-  color:var(--muted2);border-radius:999px;padding:10px 18px;
-  white-space:nowrap;cursor:pointer;font-weight:700;font-size:13px;
+  color:var(--muted2);border-radius:999px;padding:12px 20px;
+  white-space:nowrap;cursor:pointer;font-weight:750;font-size:15px;
   font-family:var(--fb);transition:all .18s;flex-shrink:0;
 }
 .tab.active{background:var(--green);color:#000;border-color:var(--green)}
-
 /* ════════════════════════════
    GROUP BLOCKS — each group its own color
 ════════════════════════════ */
@@ -237,13 +181,13 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 
 /* shared group styles */
 .group-header{
-  padding:16px 18px;display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
   cursor:pointer;transition:background .18s;
 }
-.group-title{font-family:var(--fd);font-size:26px;letter-spacing:1px;color:var(--text)}
-.group-sub{font-size:12px;color:var(--muted2);font-weight:600;margin-top:2px}
+.group-copy{flex:1;min-width:0}
+.group-title{font-family:var(--fd);font-size:28px;line-height:1.05;letter-spacing:1px;color:var(--text)}
 .group-done-badge{
-  font-size:11px;font-weight:800;letter-spacing:.5px;padding:4px 10px;
+  font-size:12px;font-weight:800;letter-spacing:.5px;padding:5px 11px;
   border-radius:999px;background:rgba(181,242,61,.12);border:1px solid rgba(181,242,61,.25);
 }
 .group-pct{font-family:var(--fd);font-size:22px;line-height:1}
@@ -253,35 +197,54 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .group-progress-bar{height:4px;background:var(--s3)}
 .group-progress-fill{height:100%;transition:width .6s cubic-bezier(.22,.68,0,1.2)}
 
-.group-body{display:none;background:var(--s1)}
-.group-body.open{display:block;animation:bodyIn .2s ease}
+.group-body{display:none;background:var(--s1);padding:10px}
+.group-body.open{display:flex;flex-direction:column;gap:9px;animation:bodyIn .2s ease}
 @keyframes bodyIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── EXERCISE ROW ── */
+.exercise-card-shell{
+  position:relative;overflow:hidden;border-radius:17px;
+  background:var(--s3);isolation:isolate;
+}
+.row-swipe-actions{position:absolute;inset:0;display:flex;align-items:stretch;justify-content:space-between;z-index:1}
+.row-swipe-action{
+  width:52%;display:flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  opacity:.72;transition:opacity .12s;
+}
+.row-swipe-action.open{
+  justify-content:flex-start;padding-left:20px;color:#000;
+  background:linear-gradient(90deg,var(--green),var(--green2));
+}
+.row-swipe-action.skip{
+  justify-content:flex-end;padding-right:20px;color:#fff;
+  background:linear-gradient(270deg,var(--red),#9e2424);
+}
+.exercise-card-shell[data-swipe-direction="open"] .row-swipe-action.open,
+.exercise-card-shell[data-swipe-direction="skip"] .row-swipe-action.skip{opacity:1}
+.row-swipe-icon{font-size:22px;line-height:1}
 .exercise-row{
   display:flex;align-items:center;gap:12px;
-  padding:15px 18px;border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background .12s;
+  min-height:108px;padding:17px 14px;background:var(--s2);
+  border:1px solid var(--border2);border-radius:16px;
+  cursor:pointer;transition:background .12s,transform .2s ease,box-shadow .2s ease;
+  position:relative;z-index:2;touch-action:pan-y;user-select:none;
 }
-.exercise-row:last-child{border-bottom:none}
+.exercise-row:active{box-shadow:0 6px 18px rgba(0,0,0,.2)}
 .exercise-row.skipped{background:rgba(255,77,77,.035)}
 .exercise-row.skipped .exercise-name{color:var(--muted2);text-decoration:line-through;text-decoration-thickness:1px}
-.exercise-num{font-size:13px;font-weight:800;min-width:22px;flex-shrink:0;color:var(--muted)}
+.exercise-num{font-size:15px;font-weight:900;min-width:24px;flex-shrink:0;color:var(--muted)}
 .exercise-main{flex:1;min-width:0}
-.exercise-name{font-size:16px;font-weight:700;line-height:1.2;color:var(--text)}
+.exercise-name{font-size:19px;font-weight:800;line-height:1.18;color:var(--text);letter-spacing:-.15px}
 
 /* prescription pills */
-.ex-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.ex-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
 .ex-pill{
-  font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;
+  font-size:12px;font-weight:750;padding:5px 10px;border-radius:999px;
   border:1px solid var(--border2);background:var(--s2);color:var(--muted2);
   white-space:nowrap;
 }
 .ep-last{color:var(--gold)!important;border-color:rgba(245,200,66,.3)!important;background:rgba(245,200,66,.07)!important}
-.ep-new{color:var(--muted)!important}
-
-.one-rm{font-size:11px;color:var(--muted2);font-weight:600;margin-top:5px}
-.one-rm span{color:var(--gold);font-weight:700}
 
 .ex-right-col{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
 .ex-done-badge{
@@ -294,7 +257,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   color:var(--red);background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.28);
 }
 .graph-row-btn{
-  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  width:40px;height:40px;border-radius:11px;flex-shrink:0;
   background:var(--s2);border:1px solid var(--border2);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   transition:background .12s;
@@ -316,13 +279,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 }
 .profile-photo img{width:100%;height:100%;object-fit:cover}
 .profile-name{font-family:var(--fd);font-size:28px;letter-spacing:1px;line-height:1;color:var(--text)}
-.profile-goal{color:var(--green);font-weight:700;margin-top:5px;font-size:13px}
-.profile-since{color:var(--muted2);font-size:12px;margin-top:4px}
-.profile-stats{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.profile-stat{background:rgba(0,0,0,.25);border-radius:12px;padding:12px 8px;text-align:center}
-[data-theme="light"] .profile-stat{background:rgba(0,0,0,.06)}
-.profile-stat-num{color:var(--green);font-family:var(--fd);font-size:26px}
-.profile-stat-lbl{color:var(--muted2);font-size:10px;text-transform:uppercase;font-weight:700;margin-top:3px}
 
 /* theme toggle */
 .theme-row{padding:0 14px;margin-bottom:4px}
@@ -335,7 +291,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .theme-left{display:flex;align-items:center;gap:10px}
 .theme-icon{font-size:22px;width:30px;text-align:center}
 .theme-lbl{font-size:15px;font-weight:700;color:var(--text)}
-.theme-sub{font-size:12px;color:var(--muted2);margin-top:1px;font-weight:500}
 .toggle-sw{
   width:48px;height:26px;border-radius:999px;background:var(--s3);
   border:1px solid var(--border2);position:relative;transition:background .2s;flex-shrink:0;
@@ -348,9 +303,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 }
 .toggle-sw.on .toggle-knob{transform:translateX(22px)}
 
-.profile-form{padding:0 14px;display:flex;flex-direction:column;gap:10px}
+.profile-form{padding:10px 14px 0;display:flex;flex-direction:column;gap:10px}
 .profile-card{background:var(--s1);border:1px solid var(--border2);border-radius:16px;padding:18px}
-.profile-card-title{color:var(--muted2);text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:16px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field+.field{margin-top:10px}
 .field-row{display:flex;gap:10px}
@@ -376,13 +330,13 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 /* ── NAV ── */
 .nav{
   position:fixed;left:50%;transform:translateX(-50%);bottom:0;
-  width:100%;max-width:430px;background:var(--s1);
+  width:100%;max-width:460px;background:var(--s1);
   border-top:1px solid var(--border2);display:flex;z-index:30;
   padding:7px 0 calc(9px + var(--safe));
 }
 .nav-item{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
-  cursor:pointer;color:var(--muted2);font-size:10px;font-weight:700;
+  cursor:pointer;color:var(--muted2);font-size:11px;font-weight:750;
   text-transform:uppercase;letter-spacing:.5px;padding:4px;transition:color .18s;
   position:relative;
 }
@@ -415,7 +369,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .overlay.show{display:flex;animation:fo .18s ease}
 @keyframes fo{from{opacity:0}to{opacity:1}}
 .sheet{
-  width:100%;max-width:430px;background:var(--s1);
+  width:100%;max-width:460px;background:var(--s1);
   border-top:1px solid var(--border2);border-radius:24px 24px 0 0;
   max-height:92vh;overflow:auto;
   padding-bottom:calc(20px + var(--safe));
@@ -430,8 +384,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   border:1px solid var(--border2);color:var(--muted2);
   display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;
 }
-.sheet-sub{padding:0 20px 14px;border-bottom:1px solid var(--border)}
-.sheet-sub strong{color:var(--text)}
 .ex-meta{display:flex;gap:8px;align-items:stretch;padding:0 20px 16px;border-bottom:1px solid var(--border)}
 .ex-meta-pill{
   flex:1;background:var(--gbg);border:1px solid var(--gborder);
@@ -508,9 +460,9 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .swipe-grab-zone:active{cursor:grabbing}
 .swipe-topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .swipe-session{
-  color:var(--green);font-size:10px;font-weight:900;letter-spacing:2.2px;text-transform:uppercase;
+  color:var(--green);font-size:12px;font-weight:900;letter-spacing:2.2px;text-transform:uppercase;
 }
-.swipe-position{color:var(--muted2);font-size:11px;font-weight:800;white-space:nowrap}
+.swipe-position{color:var(--muted2);font-size:13px;font-weight:800;white-space:nowrap}
 .swipe-title{
   font-family:var(--fd);font-size:clamp(38px,10vw,54px);line-height:.92;
   letter-spacing:1px;color:var(--text);margin-top:18px;max-width:92%;
@@ -518,29 +470,27 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .swipe-target{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
 .swipe-target-pill{
   border:1px solid var(--gborder);background:rgba(181,242,61,.07);color:var(--green);
-  border-radius:999px;padding:6px 11px;font-size:11px;font-weight:800;
+  border-radius:999px;padding:7px 12px;font-size:13px;font-weight:800;
 }
-.swipe-drag-hint{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;color:var(--muted2);font-size:10px;font-weight:700;letter-spacing:.4px}
-.swipe-drag-line{width:42px;height:4px;border-radius:999px;background:var(--border2)}
 .previous-card{
   margin:16px 18px 0;padding:15px;border-radius:18px;
   background:linear-gradient(145deg,rgba(245,200,66,.09),var(--s2));
   border:1px solid rgba(245,200,66,.22);
 }
 .previous-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.previous-label{font-size:10px;font-weight:900;letter-spacing:1.8px;color:var(--gold);text-transform:uppercase}
-.previous-date{font-size:11px;color:var(--muted2);font-weight:700}
+.previous-label{font-size:12px;font-weight:900;letter-spacing:1.8px;color:var(--gold);text-transform:uppercase}
+.previous-date{font-size:13px;color:var(--muted2);font-weight:700}
 .previous-values{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
 .previous-metric{background:rgba(0,0,0,.18);border-radius:12px;padding:11px 12px}
 [data-theme="light"] .previous-metric{background:rgba(255,255,255,.48)}
 .previous-value{font-family:var(--fd);font-size:34px;line-height:1;color:var(--text);letter-spacing:.5px}
-.previous-unit{font-size:10px;color:var(--muted2);font-weight:800;text-transform:uppercase;margin-top:4px}
+.previous-unit{font-size:11px;color:var(--muted2);font-weight:800;text-transform:uppercase;margin-top:4px}
 .previous-empty{font-size:13px;color:var(--muted2);font-weight:600;margin-top:10px}
 .current-load{padding:18px 18px 4px}
-.current-load-title{font-size:10px;font-weight:900;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:10px}
+.current-load-title{font-size:12px;font-weight:900;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:11px}
 .metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .metric-field{min-width:0}
-.metric-label{display:block;text-align:center;color:var(--muted2);font-size:10px;font-weight:900;letter-spacing:1px;margin-bottom:6px}
+.metric-label{display:block;text-align:center;color:var(--muted2);font-size:11px;font-weight:900;letter-spacing:1px;margin-bottom:7px}
 .metric-stepper{
   display:grid;grid-template-columns:28px minmax(0,1fr) 28px;align-items:center;
   min-height:62px;background:var(--s2);border:1px solid var(--border2);border-radius:14px;overflow:hidden;
@@ -552,7 +502,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .metric-stepper button:active{background:var(--s3);color:var(--text)}
 .metric-stepper input{
   width:100%;min-width:0;border:0;background:transparent;color:var(--text);outline:0;
-  font-family:var(--fd);font-size:28px;text-align:center;appearance:textfield;-moz-appearance:textfield;
+  font-family:var(--fd);font-size:32px;text-align:center;appearance:textfield;-moz-appearance:textfield;
 }
 .metric-stepper input::-webkit-outer-spin-button,.metric-stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .swipe-comment{padding:13px 18px 0}
@@ -560,7 +510,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .swipe-extras{display:flex;gap:8px;padding:12px 18px 0}
 .swipe-link-btn{
   flex:1;border:1px solid var(--border2);background:var(--s2);color:var(--muted2);
-  border-radius:11px;padding:10px 8px;font-family:var(--fb);font-size:11px;font-weight:800;cursor:pointer;
+  border-radius:11px;padding:11px 8px;font-family:var(--fb);font-size:12px;font-weight:800;cursor:pointer;
 }
 .history-disclosure{margin:12px 18px 0;border-top:1px solid var(--border);padding-top:12px}
 .history-disclosure summary{list-style:none;color:var(--muted2);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;cursor:pointer}
@@ -588,12 +538,11 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 .swipe-action.close{color:var(--muted2);width:52px;height:52px;font-size:22px;margin-top:5px}
 .swipe-action.complete{color:var(--green);border-color:rgba(181,242,61,.4)}
 .swipe-action:disabled{opacity:.25;cursor:not-allowed}
-.swipe-action-label{font-size:9px;color:rgba(255,255,255,.48);font-weight:800;text-transform:uppercase;letter-spacing:1px}
-.swipe-legend{text-align:center;color:rgba(255,255,255,.42);font-size:10px;font-weight:700;letter-spacing:.3px;padding-bottom:max(0px,var(--safe))}
+.swipe-action-label{font-size:10px;color:rgba(255,255,255,.56);font-weight:800;text-transform:uppercase;letter-spacing:1px}
 @media (max-height:700px){
   .swipe-stage{height:calc(100dvh - 16px);gap:8px}
   .swipe-actions{gap:22px}.swipe-action{width:54px;height:54px}.swipe-action.close{width:46px;height:46px}
-  .swipe-action-label,.swipe-legend{display:none}
+  .swipe-action-label{display:none}
   .swipe-title{font-size:38px}.swipe-grab-zone{padding-top:14px;padding-bottom:12px}
 }
 
@@ -655,15 +604,13 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 /* ── AUTH ── */
 .auth-screen{position:fixed;inset:0;background:var(--bg);z-index:120;display:flex;align-items:center;justify-content:center;padding:26px}
 .auth-card{width:100%;max-width:360px;background:var(--s1);border:1px solid var(--border2);border-radius:22px;padding:26px}
-.auth-title{font-family:var(--fd);font-size:40px;letter-spacing:3px;color:var(--text)}
-.auth-sub{color:var(--green);text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:2.5px;margin-top:4px}
-.auth-copy{color:var(--muted2);font-size:14px;line-height:1.5;margin:18px 0}
+.auth-title{font-family:var(--fd);font-size:40px;letter-spacing:3px;color:var(--text);margin-bottom:24px}
 .auth-error{display:none;margin-top:10px;background:#1a0000;border:1px solid #4d1010;color:#ff8b8b;padding:10px 14px;border-radius:10px;font-size:13px}
 
 /* ── GRAPH ── */
 .graph-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
 .graph-overlay.show{display:flex;animation:fo .18s ease}
-.graph-sheet{width:100%;max-width:430px;background:var(--s1);border-top:1px solid var(--border2);border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;padding-bottom:calc(24px + var(--safe));animation:su .22s cubic-bezier(.22,.68,0,1.2)}
+.graph-sheet{width:100%;max-width:460px;background:var(--s1);border-top:1px solid var(--border2);border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;padding-bottom:calc(24px + var(--safe));animation:su .22s cubic-bezier(.22,.68,0,1.2)}
 .graph-title-row{display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px}
 .graph-ex-name{font-family:var(--fd);font-size:26px;letter-spacing:1px;color:var(--text)}
 .graph-wrap{padding:0 20px 4px}
@@ -680,8 +627,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   <div class="auth-screen" id="auth-screen">
     <div class="auth-card">
       <div class="auth-title">INGUZ</div>
-      <div class="auth-sub">Body Training</div>
-      <div class="auth-copy">Ingresá para cargar tu rutina. Backend conectado a Cloudflare.</div>
       <div class="field">
         <label class="label">Usuario</label>
         <input class="input" id="login-user" type="text" value="admin" autocomplete="username"/>
@@ -702,51 +647,24 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     <div class="header">
       <div class="brand">
         <div class="brand-title">INGUZ</div>
-        <div class="brand-sub" id="header-sub">Body Training</div>
       </div>
       <div class="avatar" id="header-avatar" onclick="showScreen('perfil')"><span id="header-avatar-text">?</span></div>
     </div>
-    <div class="hero">
-      <div class="hero-kicker"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block"></span>HOY</div>
-      <div class="hero-title" id="hero-greeting">HOLA</div>
-      <div class="hero-sub" id="hero-sub">Tu plan está listo para cargar.</div>
-      <button class="hero-btn" onclick="showScreen('rutinas')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        VER RUTINA
-      </button>
-      <div class="sync-badge">
-        <span class="sync-dot" id="sync-dot"></span>
-        <span id="sync-text">Sincronización lista</span>
+    <div class="section-title">Rutinas</div>
+    <div class="today-card" onclick="showScreen('rutinas')">
+      <div class="today-icon">⚡</div>
+      <div style="flex:1;min-width:0">
+        <div class="today-name">ELEGIR DÍA</div>
+        <div class="today-sub">3 rutinas</div>
       </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
-    <div class="section-title">Tu progreso</div>
     <div class="stats-row">
       <div class="stat-card"><div class="stat-num" id="stat-sesiones">0</div><div class="stat-lbl">Sesiones</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-ejercicios">0</div><div class="stat-lbl">Ejercicios</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-racha">0</div><div class="stat-lbl">Racha</div></div>
     </div>
-    <div class="section-title">Sesión de hoy</div>
-    <div class="today-card" onclick="goToTodayRutina()">
-      <div class="today-icon">⚡</div>
-      <div style="flex:1;min-width:0">
-        <div class="today-label" id="today-label">HOY ENTRENÁS</div>
-        <div class="today-name" id="today-name">—</div>
-        <div class="today-sub" id="today-sub">Tocá para ver ejercicios</div>
-      </div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-    <div style="height:10px"></div>
-    <div class="session-progress" id="session-progress" style="display:none">
-      <div class="sp-top">
-        <span class="sp-label">Completado hoy</span>
-        <div class="sp-right">
-          <div class="sp-pct" id="sp-pct">0%</div>
-          <div class="sp-count" id="sp-count">0 / 0</div>
-        </div>
-      </div>
-      <div class="sp-bar"><div class="sp-fill" id="sp-fill" style="width:0%"></div></div>
-    </div>
-    <div class="section-title">Últimos entrenamientos</div>
+    <div class="section-title">Historial</div>
     <div class="hist-list" id="home-hist-list"></div>
   </div>
 
@@ -755,16 +673,13 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     <div class="header">
       <div class="brand">
         <div class="brand-title">RUTINAS</div>
-        <div class="brand-sub">Plan personalizado</div>
       </div>
     </div>
-    <div class="section-title">Categorías</div>
     <div class="tabs">
       <button class="tab active" onclick="switchTab(this,'all')">Todas</button>
-      <button class="tab" onclick="switchTab(this,'dia1')">Sesión 1</button>
-      <button class="tab" onclick="switchTab(this,'dia2')">Sesión 2</button>
-      <button class="tab" onclick="switchTab(this,'dia3')">Sesión 3</button>
-      <button class="tab" onclick="switchTab(this,'dia4')">Sesión 4</button>
+      <button class="tab" onclick="switchTab(this,'dia1')">1 · Pecho</button>
+      <button class="tab" onclick="switchTab(this,'dia2')">2 · Pierna</button>
+      <button class="tab" onclick="switchTab(this,'dia3')">3 · Espalda</button>
     </div>
     <div style="height:14px"></div>
     <div id="groups-wrap"></div>
@@ -775,7 +690,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     <div class="header">
       <div class="brand">
         <div class="brand-title">PERFIL</div>
-        <div class="brand-sub">Mis datos</div>
       </div>
     </div>
     <div class="profile-hero">
@@ -784,37 +698,24 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           <span id="profile-photo-text">?</span>
         </div>
         <input id="photo-input" type="file" accept="image/*" style="display:none"/>
-        <div>
-          <div class="profile-name" id="profile-name">Tu nombre</div>
-          <div class="profile-goal" id="profile-goal">— objetivo —</div>
-          <div class="profile-since" id="profile-since">Miembro desde —</div>
-        </div>
-      </div>
-      <div class="profile-stats">
-        <div class="profile-stat"><div class="profile-stat-num" id="profile-weight">—</div><div class="profile-stat-lbl">Peso kg</div></div>
-        <div class="profile-stat"><div class="profile-stat-num" id="profile-height">—</div><div class="profile-stat-lbl">Altura cm</div></div>
-        <div class="profile-stat"><div class="profile-stat-num" id="profile-sessions">0</div><div class="profile-stat-lbl">Sesiones</div></div>
+        <div class="profile-name" id="profile-name">Tu nombre</div>
       </div>
     </div>
 
-    <div class="section-title">Apariencia</div>
     <div class="theme-row">
       <div class="theme-card" onclick="toggleTheme()">
         <div class="theme-left">
           <div class="theme-icon" id="theme-icon">🌙</div>
           <div>
-            <div class="theme-lbl" id="theme-label">Modo oscuro activo</div>
-            <div class="theme-sub">Tocá para cambiar</div>
+            <div class="theme-lbl" id="theme-label">Oscuro</div>
           </div>
         </div>
         <div class="toggle-sw" id="theme-switch"><div class="toggle-knob"></div></div>
       </div>
     </div>
 
-    <div class="section-title">Mis datos</div>
     <div class="profile-form">
       <div class="profile-card">
-        <div class="profile-card-title">Datos personales</div>
         <div class="field">
           <label class="label">Nombre</label>
           <input class="input" id="pf-nombre" type="text" placeholder="Tu nombre"/>
@@ -825,15 +726,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         </div>
       </div>
       <div class="profile-card">
-        <div class="profile-card-title">Objetivo</div>
         <div class="field">
-          <label class="label">Meta</label>
+          <label class="label">Objetivo</label>
           <select class="select" id="pf-objetivo">
             <option value="">— Seleccioná —</option>
             <option value="Ganar masa muscular">Ganar masa muscular</option>
             <option value="Perder grasa">Perder grasa</option>
             <option value="Mejorar resistencia">Mejorar resistencia</option>
             <option value="Fuerza general">Fuerza general</option>
+            <option value="Estado físico general">Estado físico general</option>
             <option value="Tonificar">Tonificar</option>
             <option value="Rendimiento deportivo">Rendimiento deportivo</option>
           </select>
@@ -851,7 +752,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
   <div class="nav">
     <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <div>Home</div><div class="nav-pip"></div>
+      <div>Inicio</div><div class="nav-pip"></div>
     </div>
     <div class="nav-item" id="nav-rutinas" onclick="showScreen('rutinas')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -886,31 +787,30 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
               <h2 class="swipe-title" id="ex-modal-title">Ejercicio</h2>
               <div class="swipe-target">
                 <span class="swipe-target-pill"><span id="ex-meta-series">—</span> series</span>
-                <span class="swipe-target-pill"><span id="ex-meta-reps">—</span> reps objetivo</span>
+                <span class="swipe-target-pill"><span id="ex-meta-reps">—</span> reps</span>
               </div>
-              <div class="swipe-drag-hint"><span>Arrastrá esta zona</span><span class="swipe-drag-line"></span></div>
             </div>
 
             <section class="previous-card">
               <div class="previous-head">
-                <div class="previous-label">Último registro</div>
+                <div class="previous-label">Anterior</div>
                 <div class="previous-date" id="previous-date">—</div>
               </div>
               <div class="previous-values" id="previous-values">
                 <div class="previous-metric">
                   <div class="previous-value" id="previous-reps">—</div>
-                  <div class="previous-unit">repeticiones</div>
+                  <div class="previous-unit">Repes</div>
                 </div>
                 <div class="previous-metric">
                   <div class="previous-value" id="previous-weight">—</div>
-                  <div class="previous-unit">kilogramos</div>
+                  <div class="previous-unit">Kg</div>
                 </div>
               </div>
-              <div class="previous-empty" id="previous-empty" hidden>Este ejercicio todavía no tiene registros anteriores.</div>
+              <div class="previous-empty" id="previous-empty" hidden>—</div>
             </section>
 
             <section class="current-load">
-              <div class="current-load-title" id="current-load-title">CARGAR ESTA VEZ</div>
+              <div class="current-load-title">HOY</div>
               <div class="metric-grid">
                 <div class="metric-field">
                   <label class="metric-label" for="m-series">SERIES</label>
@@ -940,15 +840,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
             </section>
 
             <div class="swipe-comment">
-              <label class="label" for="m-comment">Comentario opcional</label>
-              <textarea class="textarea" id="m-comment" placeholder="Técnica, esfuerzo, molestias…"></textarea>
+              <label class="label" for="m-comment">Nota</label>
+              <textarea class="textarea" id="m-comment"></textarea>
             </div>
             <div class="swipe-extras">
-              <button class="swipe-link-btn" type="button" onclick="openRetroModal()">Cargar otra fecha</button>
-              <button class="swipe-link-btn" type="button" onclick="openGraph(currentExerciseId)">Ver progreso</button>
+              <button class="swipe-link-btn" type="button" onclick="openRetroModal()">Otra fecha</button>
+              <button class="swipe-link-btn" type="button" onclick="openGraph(currentExerciseId)">Progreso</button>
             </div>
             <details class="history-disclosure">
-              <summary>Ver registros anteriores</summary>
+              <summary>Historial</summary>
               <div class="history-box">
                 <div class="history-list" id="exercise-history-list"></div>
               </div>
@@ -971,7 +871,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           <span class="swipe-action-label">Completar</span>
         </div>
       </div>
-      <div class="swipe-legend">← omitir · ↓ volver · completar →</div>
     </div>
   </div>
 
@@ -980,10 +879,9 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     <div class="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-header">
-        <div class="sheet-title">Carga retroactiva</div>
+        <div class="sheet-title">Otra fecha</div>
         <button class="sheet-close" onclick="forceCloseRetroModal()">✕</button>
       </div>
-      <div class="sheet-sub">Guardá un entrenamiento en otra fecha.</div>
       <div style="padding:16px 20px 0;display:flex;flex-direction:column;gap:12px">
         <div class="field"><label class="label">Fecha</label><input class="input" id="retro-date" type="date"/></div>
         <div class="field-row">
@@ -991,10 +889,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           <div class="field"><label class="label">Reps</label><select class="select" id="retro-reps"></select></div>
           <div class="field"><label class="label">Peso</label><select class="select" id="retro-peso"></select></div>
         </div>
-        <div class="field"><label class="label">Comentario</label><textarea class="textarea" id="retro-comment" placeholder="Opcional"></textarea></div>
+        <div class="field"><label class="label">Nota</label><textarea class="textarea" id="retro-comment"></textarea></div>
       </div>
       <div style="height:14px"></div>
-      <button class="save-btn" onclick="saveRetroEntry()">Guardar retroactivo</button>
+      <button class="save-btn" onclick="saveRetroEntry()">Guardar</button>
       <div style="height:8px"></div>
       <button class="secondary-btn" onclick="forceCloseRetroModal()">Cancelar</button>
     </div>
@@ -1037,16 +935,12 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       <div class="graph-btn-row" style="margin-bottom:14px">
         <button class="graph-metric-btn active" onclick="setGraphMetric('peso',this)">Peso (kg)</button>
         <button class="graph-metric-btn" onclick="setGraphMetric('reps',this)">Reps</button>
-        <button class="graph-metric-btn" onclick="setGraphMetric('1rm',this)">1RM estimado</button>
       </div>
       <div class="graph-wrap">
         <div class="graph-canvas-wrap">
           <canvas id="graph-canvas" height="200"></canvas>
-          <div class="graph-empty" id="graph-empty" style="display:none">Sin suficientes registros para graficar</div>
+          <div class="graph-empty" id="graph-empty" style="display:none">Sin datos</div>
         </div>
-      </div>
-      <div style="padding:14px 20px 0">
-        <div style="font-size:12px;color:var(--muted2);font-weight:600">1RM = peso × (1 + reps ÷ 30) — Epley</div>
       </div>
     </div>
   </div>
@@ -1059,55 +953,43 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     const AUTH_KEY = 'inguz_auth_ok';
     const LOCAL_DATA_KEY = 'inguz_data';
 
-    const RUTINA_ORDEN = ['dia1', 'dia2', 'dia3', 'dia4'];
+    const PLAN_VERSION = 3;
 
     const RUTINAS = {
       dia1: {
-        nombre: 'SESIÓN 1',
-        color: 'pierna',
+        nombre: 'DÍA 1 · PECHO + TRÍCEPS + HOMBROS',
+        color: 'torso',
         ejercicios: [
-          { id: 'pi1_barra', nombre: 'Sentadilla con barra', series: 3, reps: '4-8' },
-          { id: 'pi2', nombre: 'Peso muerto rumano con barra', series: 3, reps: '6-8' },
-          { id: 'pi4', nombre: 'Prensa 45', series: 4, reps: '8-12' },
-          { id: 'pi3', nombre: 'Hip Thrust', series: 4, reps: '8-12' },
-          { id: 'fb6', nombre: 'Banco de cuádriceps', series: 3, reps: '10-15' },
-          { id: 'pi6', nombre: 'Gemelos en polea', series: 3, reps: '10-15' }
+          { id: 'to1', nombre: 'Banco plano', zona: 'Pecho', series: 3, reps: '6-10' },
+          { id: 'fb2', nombre: 'Press inclinado con mancuerna', zona: 'Pecho', series: 3, reps: '8-12' },
+          { id: 'hombro_press_militar', nombre: 'Press militar con mancuernas', zona: 'Hombros', series: 3, reps: '8-12' },
+          { id: 'hombro_laterales', nombre: 'Elevaciones laterales con mancuernas', zona: 'Hombros', series: 3, reps: '12-15' },
+          { id: 'triceps_polea', nombre: 'Tríceps en polea', zona: 'Tríceps', series: 3, reps: '10-15' },
+          { id: 'triceps_sobre_cabeza', nombre: 'Tríceps sobre cabeza en polea', zona: 'Tríceps', series: 3, reps: '10-15' }
         ]
       },
       dia2: {
-        nombre: 'SESIÓN 2',
-        color: 'torso',
+        nombre: 'DÍA 2 · PIERNA',
+        color: 'pierna',
         ejercicios: [
-          { id: 'to1', nombre: 'Banco plano', series: 3, reps: '3-6' },
-          { id: 'to2', nombre: 'Polea alta por delante', series: 3, reps: '8-12' },
-          { id: 'fb2', nombre: 'Press inclinado con mancuerna', series: 4, reps: '8-12' },
-          { id: 'd2_remo_barra', nombre: 'Remo con barra', series: 3, reps: '8-12' },
-          { id: 'd2_cruce_altas', nombre: 'Cruce de poleas altas', series: 3, reps: '8-12' },
-          { id: 'd2_face_pull', nombre: 'Face Pull', series: 3, reps: '8-12' }
+          { id: 'pi1_barra', nombre: 'Sentadilla con barra', zona: 'Piernas', series: 3, reps: '6-10' },
+          { id: 'pi2', nombre: 'Peso muerto rumano con barra', zona: 'Posterior', series: 3, reps: '8-10' },
+          { id: 'pi4', nombre: 'Prensa 45', zona: 'Piernas', series: 3, reps: '10-12' },
+          { id: 'pi3', nombre: 'Hip Thrust en máquina', zona: 'Glúteos', series: 3, reps: '8-12' },
+          { id: 'curl_femoral_sentado', nombre: 'Curl femoral sentado', zona: 'Posterior', series: 3, reps: '10-15' },
+          { id: 'pi6', nombre: 'Gemelos en polea', zona: 'Pantorrillas', series: 3, reps: '12-15' }
         ]
       },
       dia3: {
-        nombre: 'SESIÓN 3',
-        color: 'pierna',
+        nombre: 'DÍA 3 · ESPALDA + BÍCEPS + HOMBROS',
+        color: 'fullbody',
         ejercicios: [
-          { id: 'fb1', nombre: 'Peso muerto', series: 3, reps: '4-8' },
-          { id: 'd3_sentadilla_frontal', nombre: 'Sentadilla frontal', series: 3, reps: '6-8' },
-          { id: 'd3_prensa_hack', nombre: 'Prensa Hack', series: 3, reps: '6-10' },
-          { id: 'd3_hip_unilateral', nombre: 'Hip Thrust unilateral con mancuerna', series: 3, reps: '8-12' },
-          { id: 'd3_camilla_isquios', nombre: 'Camilla de isquiotibiales', series: 3, reps: '10-15' },
-          { id: 'd3_gemelos_unilateral', nombre: 'Gemelos unilateral', series: 3, reps: '10-15' }
-        ]
-      },
-      dia4: {
-        nombre: 'SESIÓN 4',
-        color: 'torso',
-        ejercicios: [
-          { id: 'to2', nombre: 'Polea alta por delante', series: 4, reps: '3-6' },
-          { id: 'fb2', nombre: 'Press inclinado', series: 3, reps: '8-12' },
-          { id: 'd4_pecho_hammer', nombre: 'Pecho Hammer', series: 3, reps: '8-12' },
-          { id: 'fb4', nombre: 'Remo sentado agarre neutro', series: 3, reps: '8-12' },
-          { id: 'd4_cruce_bajas', nombre: 'Cruce de poleas bajas', series: 3, reps: '10-15' },
-          { id: 'd4_remo_seal', nombre: 'Remo Seal', series: 3, reps: '8-12' }
+          { id: 'to2', nombre: 'Polea alta por delante', zona: 'Espalda', series: 3, reps: '8-12' },
+          { id: 'remo_maquina_45', nombre: 'Remo en máquina inclinada 45°', zona: 'Espalda', series: 3, reps: '8-12' },
+          { id: 'd2_face_pull', nombre: 'Face Pull', zona: 'Hombros', series: 3, reps: '12-15' },
+          { id: 'hombro_posterior_maquina', nombre: 'Vuelos posteriores en máquina', zona: 'Hombros', series: 3, reps: '12-15' },
+          { id: 'biceps_polea', nombre: 'Curl de bíceps en polea', zona: 'Bíceps', series: 3, reps: '10-15' },
+          { id: 'biceps_martillo', nombre: 'Curl martillo con mancuernas', zona: 'Bíceps', series: 3, reps: '10-12' }
         ]
       }
     };
@@ -1116,7 +998,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       perfil: {},
       historial: {},
       omitidos: {},
-      ultimaRutina: null
+      planVersion: PLAN_VERSION
     };
 
     let currentTab = 'all';
@@ -1126,6 +1008,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     let timerRemaining = 120;
     let timerInterval = null;
     let swipeBusy = false;
+    let rowSwipeBusy = false;
     const swipeState = {
       active: false,
       pointerId: null,
@@ -1141,23 +1024,28 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           nombre: '',
           peso: '',
           altura: '',
-          objetivo: '',
+          objetivo: 'Estado físico general',
           desde: new Date().toISOString().slice(0, 10),
           foto: ''
         },
         historial: {},
         omitidos: {},
-        ultimaRutina: null
+        planVersion: PLAN_VERSION
       };
     }
 
     function normalizeData(data) {
       const base = getDefaultData();
+      const samePlan = Number(data?.planVersion) === PLAN_VERSION;
       const merged = {
-        perfil: { ...base.perfil, ...(data?.perfil || {}) },
+        perfil: {
+          ...base.perfil,
+          ...(data?.perfil || {}),
+          ...(!samePlan ? { objetivo: 'Estado físico general' } : {})
+        },
         historial: typeof data?.historial === 'object' && data?.historial ? data.historial : {},
-        omitidos: typeof data?.omitidos === 'object' && data?.omitidos ? data.omitidos : {},
-        ultimaRutina: RUTINA_ORDEN.includes(data?.ultimaRutina) ? data.ultimaRutina : null
+        omitidos: samePlan && typeof data?.omitidos === 'object' && data?.omitidos ? data.omitidos : {},
+        planVersion: PLAN_VERSION
       };
       return merged;
     }
@@ -1204,16 +1092,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     }
 
     function setSyncState(state, text) {
-      const dot = document.getElementById('sync-dot');
-      const label = document.getElementById('sync-text');
-      dot.className = 'sync-dot';
-      if (state === 'ok') dot.classList.add('ok');
-      if (state === 'err') dot.classList.add('err');
-      label.textContent = text;
-      setTimeout(() => {
-        dot.className = 'sync-dot';
-        label.textContent = 'Sincronización lista';
-      }, 2000);
+      if (state === 'err') showToast(text);
     }
 
     function getPerfil() {
@@ -1239,7 +1118,9 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 
     function isExerciseCompletedOnDay(exId, gid, day = todayKey()) {
       return (APP.historial[exId] || []).some(reg =>
-        reg.fecha.slice(0, 10) === day && (!reg.rutina || reg.rutina === gid)
+        Number(reg.planVersion) === PLAN_VERSION &&
+        reg.fecha.slice(0, 10) === day &&
+        (!reg.rutina || reg.rutina === gid)
       );
     }
 
@@ -1269,30 +1150,9 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       return { completed, skipped, resolved: completed + skipped, total: grupo.ejercicios.length };
     }
 
-    function getNextRoutineKey() {
-      const lastKey = APP.ultimaRutina || null;
-      if (!lastKey || !RUTINA_ORDEN.includes(lastKey)) return RUTINA_ORDEN[0];
-      const index = RUTINA_ORDEN.indexOf(lastKey);
-      return RUTINA_ORDEN[(index + 1) % RUTINA_ORDEN.length];
-    }
-
     function getRoutineKeyByExercise(exId, preferredGid = null) {
       if (preferredGid && RUTINAS[preferredGid]?.ejercicios.some(e => e.id === exId)) return preferredGid;
       return Object.keys(RUTINAS).find(gid => RUTINAS[gid].ejercicios.some(e => e.id === exId)) || null;
-    }
-
-    function markRoutineCompletedIfReady(gid, dateStr) {
-      const grupo = RUTINAS[gid];
-      if (!grupo) return false;
-      const day = dateStr.slice(0, 10);
-      const resolved = grupo.ejercicios.every(ex =>
-        isExerciseCompletedOnDay(ex.id, gid, day) || isExerciseSkippedOnDay(ex.id, gid, day)
-      );
-      if (resolved) {
-        APP.ultimaRutina = gid;
-        return true;
-      }
-      return false;
     }
 
     function routineColor(gid) {
@@ -1335,35 +1195,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     function updateHome() {
       const perfil = getPerfil();
       const histEntries = allEntries();
-      const nombre = perfil.nombre?.trim() || 'ATLETA';
-      document.getElementById('hero-greeting').textContent = `HOLA ${nombre.split(' ')[0].toUpperCase()}`;
-      document.getElementById('hero-sub').textContent = perfil.objetivo ? `Objetivo: ${perfil.objetivo}` : 'Tu plan está listo para cargar.';
-
-      const todayGroupId = getNextRoutineKey();
-      const grupo = RUTINAS[todayGroupId];
-      document.getElementById('today-label').textContent = 'PRÓXIMA SESIÓN';
-      document.getElementById('today-name').textContent = grupo.nombre;
-      document.getElementById('today-sub').textContent = `${grupo.ejercicios.length} ejercicios para completar.`;
 
       document.getElementById('stat-sesiones').textContent = sessionsCount();
       document.getElementById('stat-ejercicios').textContent = uniqueExercisesCount();
       document.getElementById('stat-racha').textContent = streakCount();
-
-      const progEl = document.getElementById('session-progress');
-      if (todayGroupId && RUTINAS[todayGroupId]) {
-        const status = groupStatusCounts(todayGroupId);
-        const pct2  = status.total ? Math.round((status.resolved / status.total) * 100) : 0;
-        if (progEl) {
-          progEl.style.display = 'block';
-          document.getElementById('sp-pct').textContent   = pct2 + '%';
-          document.getElementById('sp-count').textContent = status.skipped
-            ? `${status.completed} completas · ${status.skipped} omitidas`
-            : `${status.completed} / ${status.total}`;
-          document.getElementById('sp-fill').style.width  = pct2 + '%';
-        }
-      } else if (progEl) {
-        progEl.style.display = 'none';
-      }
 
       const avatarText = initialsFromName(perfil.nombre || '?');
       const avatar = document.getElementById('header-avatar');
@@ -1375,7 +1210,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 
       const wrap = document.getElementById('home-hist-list');
       if (!histEntries.length) {
-        wrap.innerHTML = '<div class="hist-card"><div class="hist-main"><div class="hist-title">Todavía no hay entrenamientos registrados</div><div class="hist-sub">Cargá tu primer ejercicio desde la pantalla de rutinas.</div></div></div>';
+        wrap.innerHTML = '<div class="hist-card"><div class="hist-main"><div class="hist-title">Sin entrenamientos</div></div></div>';
         return;
       }
 
@@ -1389,7 +1224,11 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
 
       wrap.innerHTML = days.map(day => {
         const data = grouped[day];
-        const grupos = [...new Set(data.map(x => x.rutina && RUTINAS[x.rutina] ? RUTINAS[x.rutina].nombre : groupNameByExercise(x.exId)))];
+        const grupos = [...new Set(data.map(x =>
+          Number(x.planVersion) === PLAN_VERSION && x.rutina && RUTINAS[x.rutina]
+            ? RUTINAS[x.rutina].nombre
+            : 'Plan anterior'
+        ))];
         const formatted = formatDateShort(day);
         return `
           <div class="hist-card">
@@ -1399,9 +1238,8 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
             </div>
             <div class="hist-main">
               <div class="hist-title">${grupos.join(' + ')}</div>
-              <div class="hist-sub">${data.length} registro${data.length !== 1 ? 's' : ''} cargado${data.length !== 1 ? 's' : ''}</div>
             </div>
-            <div class="hist-badge">${data.length} series</div>
+            <div class="hist-badge">${data.length} ej.</div>
           </div>
         `;
       }).join('');
@@ -1443,17 +1281,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       return streak;
     }
 
-    function groupNameByExercise(exId) {
-      for (const [gid, grupo] of Object.entries(RUTINAS)) {
-        if (grupo.ejercicios.some(e => e.id === exId)) return grupo.nombre;
-      }
-      return 'Rutina';
-    }
-
-    function groupDoneCount(gid) {
-      return groupStatusCounts(gid).completed;
-    }
-
     function buildRutinas() {
       const wrap = document.getElementById('groups-wrap');
       const groups = Object.entries(RUTINAS)
@@ -1464,19 +1291,15 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           const status = groupStatusCounts(gid);
           const pct   = status.total ? Math.round((status.resolved / status.total) * 100) : 0;
           const allDone = status.resolved === status.total;
-          const statusText = status.skipped
-            ? `${status.completed} completados · ${status.skipped} omitidos`
-            : `${status.completed}/${status.total} ejercicios completados`;
           return `
             <div class="group-wrap gw-${color}" id="gwrap-${gid}">
               <div class="group-header gh-${color}" id="header-${gid}" onclick="toggleGroup('${gid}')">
-                <div>
+                <div class="group-copy">
                   <div class="group-title">${grupo.nombre}</div>
-                  <div class="group-sub">${statusText}</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:12px;">
                   ${allDone
-                    ? `<span class="group-done-badge">✓ LISTO</span>`
+                    ? `<span class="group-done-badge">✓</span>`
                     : `<span class="group-pct">${pct}%</span>`
                   }
                   <svg class="group-arrow" id="arrow-${gid}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
@@ -1490,14 +1313,10 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
           `;
         });
       wrap.innerHTML = groups.join('');
+      bindExerciseRowSwipes();
 
       const firstVisible = currentTab === 'all' ? Object.keys(RUTINAS)[0] : currentTab;
       if (document.getElementById('body-' + firstVisible)) toggleGroup(firstVisible, true);
-    }
-
-    function calc1RM(peso, reps) {
-      if (!peso || !reps) return null;
-      return Math.round(peso * (1 + reps / 30) * 10) / 10;
     }
 
     function exerciseRowHTML(ex, index, gid, color) {
@@ -1506,28 +1325,168 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const today = todayKey();
       const doneToday = isExerciseCompletedOnDay(ex.id, gid, today);
       const skippedToday = !doneToday && isExerciseSkippedOnDay(ex.id, gid, today);
-      const orm = last ? calc1RM(last.peso, last.reps) : null;
       return `
-        <div class="exercise-row ex-${color} ${doneToday ? 'done' : ''} ${skippedToday ? 'skipped' : ''}">
-          <div class="exercise-num ex-num-${color}">${index}</div>
-          <div class="exercise-main" onclick="openExerciseModal('${ex.id}','${gid}')">
-            <div class="exercise-name">${ex.nombre}</div>
-            <div class="ex-pills">
-              <span class="ex-pill ep-${color}">${ex.series} series</span>
-              <span class="ex-pill ep-${color}">${ex.reps} reps</span>
-              ${last ? `<span class="ex-pill ep-last">Último: ${last.reps} rep · ${last.peso}kg</span>` : '<span class="ex-pill ep-new">Sin registros</span>'}
-            </div>
-            ${orm ? `<div class="one-rm">1RM est. <span>${orm} kg</span></div>` : ''}
+        <div class="exercise-card-shell" data-exercise-shell>
+          <div class="row-swipe-actions" aria-hidden="true">
+            <div class="row-swipe-action open"><span class="row-swipe-icon">↗</span><span>Cargar</span></div>
+            <div class="row-swipe-action skip"><span>${skippedToday ? 'Reactivar' : 'Omitir'}</span><span class="row-swipe-icon">${skippedToday ? '↺' : '✕'}</span></div>
           </div>
-          <div class="ex-right-col">
-            ${doneToday ? `<span class="ex-done-badge">✓</span>` : ''}
-            ${skippedToday ? `<span class="ex-skip-badge" title="Omitido hoy">−</span>` : ''}
-            <button class="graph-row-btn gr-${color}" onclick="openGraph('${ex.id}')" title="Ver progreso">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            </button>
+          <div class="exercise-row ex-${color} ${doneToday ? 'done' : ''} ${skippedToday ? 'skipped' : ''}"
+               data-exercise-swipe data-ex-id="${ex.id}" data-group-id="${gid}"
+               role="button" tabindex="0" aria-label="Abrir ${ex.nombre}">
+            <div class="exercise-num ex-num-${color}">${index}</div>
+            <div class="exercise-main">
+              <div class="exercise-name">${ex.nombre}</div>
+              <div class="ex-pills">
+                <span class="ex-pill ep-${color}">${ex.series} series</span>
+                <span class="ex-pill ep-${color}">${ex.reps} reps</span>
+                ${last ? `<span class="ex-pill ep-last" title="Anterior">↺ ${last.reps} rep · ${last.peso}kg</span>` : ''}
+              </div>
+            </div>
+            <div class="ex-right-col">
+              ${doneToday ? `<span class="ex-done-badge">✓</span>` : ''}
+              ${skippedToday ? `<span class="ex-skip-badge" title="Omitido hoy">−</span>` : ''}
+              <button class="graph-row-btn gr-${color}" onclick="event.stopPropagation();openGraph('${ex.id}')" title="Ver progreso" aria-label="Ver progreso de ${ex.nombre}">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </button>
+            </div>
           </div>
         </div>
       `;
+    }
+
+    function resetExerciseRowPosition(row, animate = true) {
+      const shell = row.closest('[data-exercise-shell]');
+      row.style.transition = animate ? 'transform .22s cubic-bezier(.22,.68,0,1)' : 'none';
+      row.style.transform = 'translate3d(0,0,0)';
+      if (shell) delete shell.dataset.swipeDirection;
+      if (animate) setTimeout(() => { row.style.transition = ''; }, 230);
+      else requestAnimationFrame(() => { row.style.transition = ''; });
+    }
+
+    function openExerciseFromRow(row, exId, gid) {
+      const shell = row.closest('[data-exercise-shell]');
+      row.style.transition = 'transform .16s ease-out';
+      row.style.transform = 'translate3d(118px,0,0)';
+      if (shell) shell.dataset.swipeDirection = 'open';
+      setTimeout(() => {
+        openExerciseModal(exId, gid);
+        resetExerciseRowPosition(row, false);
+      }, 145);
+    }
+
+    async function toggleExerciseSkippedFromRow(row, exId, gid) {
+      if (rowSwipeBusy) {
+        resetExerciseRowPosition(row);
+        return;
+      }
+      if (isExerciseCompletedOnDay(exId, gid)) {
+        showToast('Ya está completado: abrilo para editar');
+        resetExerciseRowPosition(row);
+        return;
+      }
+
+      rowSwipeBusy = true;
+      const wasSkipped = isExerciseSkippedOnDay(exId, gid);
+      const shell = row.closest('[data-exercise-shell]');
+      row.style.transition = 'transform .18s ease-in, opacity .18s ease';
+      row.style.transform = 'translate3d(-110%,0,0)';
+      row.style.opacity = '.15';
+      if (shell) shell.dataset.swipeDirection = 'skip';
+      await new Promise(resolve => setTimeout(resolve, 175));
+
+      if (wasSkipped) {
+        clearExerciseSkipped(exId, gid);
+      } else {
+        setExerciseSkipped(exId, gid);
+      }
+      await persistData();
+      refreshWorkoutViews();
+      rowSwipeBusy = false;
+      showToast(wasSkipped ? 'Ejercicio reactivado' : 'Ejercicio omitido');
+    }
+
+    function bindExerciseRowSwipes() {
+      document.querySelectorAll('[data-exercise-swipe]').forEach(row => {
+        const exId = row.dataset.exId;
+        const gid = row.dataset.groupId;
+        const shell = row.closest('[data-exercise-shell]');
+        const state = {
+          active: false,
+          pointerId: null,
+          startX: 0,
+          startY: 0,
+          dx: 0,
+          dragged: false,
+          suppressClick: false
+        };
+
+        row.addEventListener('pointerdown', event => {
+          if (rowSwipeBusy || event.button !== 0 || event.target.closest('button')) return;
+          state.active = true;
+          state.pointerId = event.pointerId;
+          state.startX = event.clientX;
+          state.startY = event.clientY;
+          state.dx = 0;
+          state.dragged = false;
+          row.style.transition = 'none';
+          row.setPointerCapture(event.pointerId);
+        });
+
+        row.addEventListener('pointermove', event => {
+          if (!state.active || event.pointerId !== state.pointerId) return;
+          const dx = event.clientX - state.startX;
+          const dy = event.clientY - state.startY;
+          if (!state.dragged && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) return;
+          if (Math.abs(dx) < 7 || Math.abs(dx) <= Math.abs(dy)) return;
+          state.dragged = true;
+          state.suppressClick = true;
+          state.dx = Math.max(-132, Math.min(132, dx));
+          event.preventDefault();
+          row.style.transform = `translate3d(${state.dx}px,0,0)`;
+          if (shell) shell.dataset.swipeDirection = state.dx > 0 ? 'open' : 'skip';
+        });
+
+        row.addEventListener('pointerup', event => {
+          if (!state.active || event.pointerId !== state.pointerId) return;
+          state.active = false;
+          if (!state.dragged) {
+            row.style.transition = '';
+            return;
+          }
+          if (state.dx >= 76) openExerciseFromRow(row, exId, gid);
+          else if (state.dx <= -76) toggleExerciseSkippedFromRow(row, exId, gid);
+          else resetExerciseRowPosition(row);
+          setTimeout(() => { state.suppressClick = false; }, 320);
+        });
+
+        row.addEventListener('pointercancel', () => {
+          state.active = false;
+          if (state.dragged) resetExerciseRowPosition(row);
+        });
+
+        row.addEventListener('click', event => {
+          if (event.target.closest('button')) return;
+          if (state.suppressClick) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
+          openExerciseModal(exId, gid);
+        });
+
+        row.addEventListener('keydown', event => {
+          if (event.target.closest('button')) return;
+          if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowRight') {
+            event.preventDefault();
+            openExerciseFromRow(row, exId, gid);
+          }
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            toggleExerciseSkippedFromRow(row, exId, gid);
+          }
+        });
+      });
     }
 
     function toggleGroup(gid, forceOpen = false) {
@@ -1552,11 +1511,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
     function updatePerfil() {
       const p = getPerfil();
       document.getElementById('profile-name').textContent = p.nombre || 'Tu nombre';
-      document.getElementById('profile-goal').textContent = p.objetivo || '— objetivo —';
-      document.getElementById('profile-since').textContent = p.desde ? `Miembro desde ${p.desde}` : 'Miembro desde —';
-      document.getElementById('profile-weight').textContent = p.peso || '—';
-      document.getElementById('profile-height').textContent = p.altura || '—';
-      document.getElementById('profile-sessions').textContent = sessionsCount();
 
       document.getElementById('pf-nombre').value = p.nombre || '';
       document.getElementById('pf-peso').value = p.peso || '';
@@ -1591,20 +1545,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       updatePerfil();
       updateHome();
       showToast('Perfil guardado');
-    }
-
-    function goToTodayRutina() {
-      const gid = getNextRoutineKey();
-      showScreen('rutinas');
-      if (gid) {
-        currentTab = gid;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        const tabs = document.querySelectorAll('.tab');
-        const tabMap = { all: 0, dia1: 1, dia2: 2, dia3: 3, dia4: 4 };
-        if (tabs[tabMap[gid]]) tabs[tabMap[gid]].classList.add('active');
-        buildRutinas();
-        setTimeout(() => toggleGroup(gid, true), 50);
-      }
     }
 
     function showScreen(name) {
@@ -1643,7 +1583,11 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       return (getHistorial()[exId] || [])
         .slice()
         .reverse()
-        .find(item => item.fecha.slice(0, 10) === day && (!item.rutina || item.rutina === gid)) || null;
+        .find(item =>
+          Number(item.planVersion) === PLAN_VERSION &&
+          item.fecha.slice(0, 10) === day &&
+          (!item.rutina || item.rutina === gid)
+        ) || null;
     }
 
     function shortDisplayDate(dateStr) {
@@ -1667,7 +1611,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       if (!entry) {
         values.hidden = true;
         empty.hidden = false;
-        document.getElementById('previous-date').textContent = 'SIN DATOS';
+        document.getElementById('previous-date').textContent = '—';
         return;
       }
       values.hidden = false;
@@ -1689,21 +1633,17 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const previous = previousExerciseEntry(exId);
       const todayEntry = todayExerciseEntry(exId, currentGroupId);
       const seed = todayEntry || previous || (hist.length ? hist[hist.length - 1] : null);
-      const skippedToday = isExerciseSkippedOnDay(exId, currentGroupId);
 
       document.getElementById('ex-modal-session').textContent = grupo.nombre;
       document.getElementById('ex-modal-position').textContent = `${exerciseIndex + 1} / ${grupo.ejercicios.length}`;
       document.getElementById('ex-modal-title').textContent = ex.nombre;
       document.getElementById('ex-meta-series').textContent = ex.series;
       document.getElementById('ex-meta-reps').textContent = ex.reps;
-      document.getElementById('current-load-title').textContent = todayEntry
-        ? 'EDITAR REGISTRO DE HOY'
-        : skippedToday ? 'OMITIDO HOY · CARGALO PARA COMPLETAR' : 'CARGAR ESTA VEZ';
       populatePreviousCard(previous);
 
       document.getElementById('m-series').value = seed?.series ?? ex.series ?? '';
       document.getElementById('m-reps').value = seed?.reps ?? suggestedReps(ex.reps);
-      document.getElementById('m-peso').value = seed?.peso ?? '';
+      document.getElementById('m-peso').value = seed?.peso ?? ex.pesoInicial ?? '';
       document.getElementById('m-comment').value = todayEntry?.comment || '';
       document.getElementById('swipe-skip-btn').disabled = !!todayEntry;
 
@@ -1715,7 +1655,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       document.getElementById('retro-date').value = todayKey();
       document.getElementById('retro-series').value = seed?.series ?? ex.series ?? '';
       document.getElementById('retro-reps').value = seed?.reps ?? suggestedReps(ex.reps);
-      document.getElementById('retro-peso').value = seed?.peso ?? '';
+      document.getElementById('retro-peso').value = seed?.peso ?? ex.pesoInicial ?? '';
       document.getElementById('retro-comment').value = '';
     }
 
@@ -1724,7 +1664,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const allRegs = getHistorial()[exId] || [];
       const list = allRegs.slice().reverse().slice(0, 8);
       if (!list.length) {
-        wrap.innerHTML = '<div class="history-item"><div class="history-item-body"><div class="history-date">Sin registros previos</div></div></div>';
+        wrap.innerHTML = '<div class="history-item"><div class="history-item-body"><div class="history-date">—</div></div></div>';
         return;
       }
       wrap.innerHTML = list.map((item, i) => {
@@ -1779,7 +1719,9 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const day = todayKey();
       const records = APP.historial[currentExerciseId] || [];
       const existingIndex = records.findIndex(item =>
-        item.fecha.slice(0, 10) === day && (!item.rutina || item.rutina === currentGroupId)
+        Number(item.planVersion) === PLAN_VERSION &&
+        item.fecha.slice(0, 10) === day &&
+        (!item.rutina || item.rutina === currentGroupId)
       );
       const existing = existingIndex >= 0 ? records[existingIndex] : null;
       const item = {
@@ -1788,13 +1730,13 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         reps: values.reps,
         peso: values.peso,
         comment: values.comment,
+        planVersion: PLAN_VERSION,
         rutina: currentGroupId
       };
       if (!APP.historial[currentExerciseId]) APP.historial[currentExerciseId] = [];
       if (existingIndex >= 0) APP.historial[currentExerciseId][existingIndex] = item;
       else APP.historial[currentExerciseId].push(item);
       clearExerciseSkipped(currentExerciseId, currentGroupId, day);
-      markRoutineCompletedIfReady(currentGroupId, item.fecha);
       await persistData();
       refreshWorkoutViews();
       return existingIndex >= 0 ? 'updated' : 'created';
@@ -1807,7 +1749,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         return false;
       }
       setExerciseSkipped(currentExerciseId, currentGroupId);
-      markRoutineCompletedIfReady(currentGroupId, `${todayKey()}T12:00:00.000Z`);
       await persistData();
       refreshWorkoutViews();
       return true;
@@ -2017,7 +1958,11 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       }
       // Bloquear fecha duplicada para el mismo ejercicio
       const yaExiste = (APP.historial[currentExerciseId] || [])
-        .some(r => r.fecha.slice(0, 10) === fecha && (!r.rutina || r.rutina === currentGroupId));
+        .some(r =>
+          Number(r.planVersion) === PLAN_VERSION &&
+          r.fecha.slice(0, 10) === fecha &&
+          (!r.rutina || r.rutina === currentGroupId)
+        );
       if (yaExiste) {
         showToast('Ya hay un registro para esa fecha');
         return;
@@ -2028,13 +1973,13 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
         reps: Number(reps),
         peso: Number(peso),
         comment: document.getElementById('retro-comment').value.trim(),
+        planVersion: PLAN_VERSION,
         rutina: currentGroupId
       };
       if (!APP.historial[currentExerciseId]) APP.historial[currentExerciseId] = [];
       APP.historial[currentExerciseId].push(item);
       APP.historial[currentExerciseId].sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
       if (fecha === todayKey()) clearExerciseSkipped(currentExerciseId, currentGroupId, fecha);
-      markRoutineCompletedIfReady(currentGroupId, item.fecha);
       await persistData();
       renderExerciseHistory(currentExerciseId);
       buildRutinas();
@@ -2261,7 +2206,6 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const pts = hist.map(r => {
         if (graphMetric === 'peso') return { x: r.fecha.slice(0,10), y: Number(r.peso) };
         if (graphMetric === 'reps') return { x: r.fecha.slice(0,10), y: Number(r.reps) };
-        if (graphMetric === '1rm') return { x: r.fecha.slice(0,10), y: calc1RM(Number(r.peso), Number(r.reps)) || 0 };
         return { x: r.fecha.slice(0,10), y: 0 };
       });
 
@@ -2368,7 +2312,7 @@ body{background:#000;color:var(--text);font-family:var(--fb);display:flex;justif
       const icon = document.getElementById('theme-icon');
       const lbl  = document.getElementById('theme-label');
       if (icon) icon.textContent = t === 'light' ? '☀️' : '🌙';
-      if (lbl)  lbl.textContent  = t === 'light' ? 'Modo claro activo' : 'Modo oscuro activo';
+      if (lbl)  lbl.textContent  = t === 'light' ? 'Claro' : 'Oscuro';
     }
     function toggleTheme() {
       const cur = localStorage.getItem('inguz_theme') || 'dark';

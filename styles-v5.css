@@ -1,0 +1,16 @@
+/* Workout Planner v5 — edición y borrado de series */
+.edit-set-dialog{max-width:360px}
+.edit-set-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 12px}
+.edit-set-grid label{display:block}
+.edit-set-grid label span{display:block;font-size:12px;font-weight:900;color:var(--muted);margin:0 0 6px 2px}
+.edit-set-grid input{width:100%;border:1px solid var(--line);background:var(--panel-2);color:var(--text);border-radius:14px;padding:14px 12px;font-size:18px;font-weight:900;outline:none}
+.edit-set-grid input:focus{border-color:rgba(var(--g1-rgb),.55);box-shadow:0 0 0 3px rgba(var(--g1-rgb),.08)}
+.v5-delete{width:100%;border:1px solid rgba(255,98,95,.35);background:rgba(255,98,95,.08);color:var(--danger);border-radius:14px;padding:12px 14px;font-size:13px;font-weight:950;margin-top:8px}
+.v5-today-set{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.today-set-data{text-align:right;white-space:nowrap}
+.set-edit-btn{border:1px solid var(--line);background:var(--panel-2);color:var(--text);border-radius:10px;padding:7px 9px;font-size:11px;font-weight:900}
+.set-edit-btn:active{transform:scale(.98)}
+@media(max-width:360px){
+  .v5-today-set{grid-template-columns:auto 1fr}
+  .set-edit-btn{grid-column:1/-1;width:100%}
+}
